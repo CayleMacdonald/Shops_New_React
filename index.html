@@ -1,297 +1,881 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Client Analytics Dashboard</title>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-
-<style>
-* { margin:0; padding:0; box-sizing:border-box; }
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f4f6fb;
-    color: #2d3748;
-    min-height: 100vh;
-    padding: 30px 0;
-}
-
-body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 180px;
-    background: linear-gradient(135deg, #667eea20, #764ba220);
-    z-index: -1;
-}
-
-.dashboard {
-    padding: 30px 20px;
-    max-width: 1800px;
-    margin: 0 auto;
-}
-
-.header {
-    margin-bottom: 40px;
-    color: #1a202c;
-}
-
-.header h1 { font-size: 42px; font-weight: 800; }
-
-.filters, .kpi-card, .chart-card, .table-card, .insights-section {
-    background: white;
-    border-radius: 14px;
-    border: 1px solid rgba(0,0,0,0.05);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-}
-
-.kpis {
-    display:grid;
-    grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
-    gap:20px;
-    margin-bottom:30px;
-}
-
-.kpi-card { padding:25px; }
-
-.kpi-value {
-    font-size: 34px;
-    font-weight: 800;
-    margin-top: 10px;
-}
-
-.charts-grid {
-    display:grid;
-    grid-template-columns: repeat(auto-fit,minmax(500px,1fr));
-    gap:20px;
-    margin-bottom:20px;
-}
-
-.chart-container { height: 350px; }
-
-.export-btn {
-    padding: 14px 28px;
-    background: #667eea;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-weight: 700;
-    cursor: pointer;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Analytics Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #2d3748;
+            min-height: 100vh;
+            padding: 30px 0;
+        }
+        
+        .dashboard { 
+            padding: 30px 20px; 
+            max-width: 1800px; 
+            margin: 0 auto; 
+        }
+        
+        .header { 
+            margin-bottom: 40px;
+            color: white;
+            text-shadow: 0 2px 15px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 { 
+            font-size: 42px; 
+            margin-bottom: 8px; 
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+        
+        .header p { 
+            font-size: 16px; 
+            opacity: 0.95;
+            font-weight: 300;
+        }
+        
+        .filters {
+            background: white;
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 32px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2);
+        }
+        
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .filter-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #1a202c;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        input[type="date"], select {
+            width: 100%;
+            padding: 13px 16px;
+            border: 2.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            background: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #2d3748;
+            font-weight: 500;
+        }
+        
+        input[type="date"]:hover, select:hover {
+            border-color: #667eea;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.15);
+        }
+        
+        input[type="date"]:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+        }
+        
+        .shop-filters {
+            padding-top: 24px;
+            border-top: 2.5px solid #e2e8f0;
+        }
+        
+        .shop-filters label {
+            display: block;
+            font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #1a202c;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .shop-filters select {
+            max-width: 500px;
+        }
+        
+        .kpis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 24px;
+            margin-bottom: 36px;
+        }
+        
+        .kpi-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+            border-left: 6px solid;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .kpi-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.15);
+        }
+        
+        .kpi-card.new {
+            border-left-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(102, 126, 234, 0.02) 100%);
+        }
+        
+        .kpi-card.react {
+            border-left-color: #f59e0b;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0.02) 100%);
+        }
+        
+        .kpi-card.revenue {
+            border-left-color: #10b981;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.02) 100%);
+        }
+        
+        .kpi-card.rate {
+            border-left-color: #8b5cf6;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(139, 92, 246, 0.02) 100%);
+        }
+        
+        .kpi-label {
+            font-size: 13px;
+            color: #1a202c;
+            margin: 0;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        
+        .kpi-value {
+            font-size: 36px;
+            font-weight: 800;
+            margin: 14px 0 0 0;
+            color: #2d3748;
+        }
+        
+        .kpi-card.new .kpi-value {
+            color: #1e40af;
+        }
+        
+        .kpi-card.react .kpi-value {
+            color: #b45309;
+        }
+        
+        .kpi-card.revenue .kpi-value {
+            color: #047857;
+        }
+        
+        .kpi-card.rate .kpi-value {
+            color: #6d28d9;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
+            gap: 28px;
+            margin-bottom: 32px;
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: 18px;
+            padding: 28px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease;
+        }
+        
+        .chart-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.15);
+        }
+        
+        .chart-card h3 {
+            margin: 0 0 24px 0;
+            font-size: 20px;
+            font-weight: 800;
+            color: #1a202c;
+        }
+        
+        .chart-container {
+            width: 100%;
+            height: 380px;
+            position: relative;
+        }
+        
+        .table-card {
+            background: white;
+            border-radius: 18px;
+            padding: 28px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+            grid-column: 1 / -1;
+        }
+        
+        .table-card h3 {
+            margin: 0 0 24px 0;
+            font-size: 20px;
+            font-weight: 800;
+            color: #1a202c;
+        }
+        
+        table {
+            width: 100%;
+            font-size: 13px;
+            border-collapse: collapse;
+        }
+        
+        thead tr {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        th {
+            text-align: left;
+            padding: 16px;
+            font-weight: 800;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        tbody tr:hover {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.08) 0%, transparent 100%);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .shop-new { 
+            color: #1e40af; 
+            font-weight: 800;
+        }
+        
+        .shop-react { 
+            color: #b45309; 
+            font-weight: 800;
+        }
+        
+        .export-btn {
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.35);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        
+        .export-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 50px rgba(102, 126, 234, 0.45);
+        }
+        
+        .export-btn:active {
+            transform: translateY(-2px);
+        }
+        
+        .insights-section {
+            background: white;
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 32px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+        }
+        
+        .insights-section h3 {
+            margin: 0 0 24px 0;
+            font-size: 20px;
+            font-weight: 800;
+            color: #1a202c;
+        }
+        
+        .insight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-left: 5px solid white;
+            padding: 16px 18px;
+            border-radius: 10px;
+            margin: 12px 0;
+            font-size: 14px;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+        }
+    </style>
 </head>
-
 <body>
+    <div class="dashboard">
+        <!-- Header -->
+        <div class="header">
+            <h1>📊 Client Analytics Dashboard</h1>
+            <p>Real-time insights into client acquisition and reactivation performance by shop location</p>
+        </div>
 
-<div class="dashboard">
+        <!-- Filters -->
+        <div class="filters">
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label>📅 Start Date</label>
+                    <input type="date" id="startDate" value="2026-06-02">
+                </div>
+                <div class="filter-group">
+                    <label>📅 End Date</label>
+                    <input type="date" id="endDate" value="2026-06-15">
+                </div>
+                <div class="filter-group">
+                    <label>⏱️ Time Grouping</label>
+                    <select id="grouping">
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>👥 Client Type</label>
+                    <select id="clientType">
+                        <option value="both">Both Types</option>
+                        <option value="new">New Only</option>
+                        <option value="react">Reactivated Only</option>
+                    </select>
+                </div>
+            </div>
+            <div class="shop-filters">
+                <label>🏪 Sales Group (Shop Location)</label>
+                <select id="shopFilter">
+                    <option value="">All Shop Locations</option>
+                </select>
+            </div>
+        </div>
 
-<div class="header">
-<h1>📊 Client Analytics Dashboard</h1>
-</div>
+        <!-- KPIs -->
+        <div class="kpis">
+            <div class="kpi-card new">
+                <p class="kpi-label">New Clients</p>
+                <p class="kpi-value" id="newCount">16</p>
+            </div>
+            <div class="kpi-card react">
+                <p class="kpi-label">Reactivated Clients</p>
+                <p class="kpi-value" id="reactCount">12</p>
+            </div>
+            <div class="kpi-card revenue">
+                <p class="kpi-label">Total Revenue (ZAR)</p>
+                <p class="kpi-value" id="totalRevenue">R28,145</p>
+            </div>
+            <div class="kpi-card rate">
+                <p class="kpi-label">Reactivation Rate</p>
+                <p class="kpi-value" id="reactivationRate">42.9%</p>
+            </div>
+        </div>
 
-<!-- FILTERS -->
-<div class="filters" style="padding:20px; margin-bottom:20px;">
-    <input type="date" id="startDate">
-    <input type="date" id="endDate">
-    <select id="clientType">
-        <option value="both">Both</option>
-        <option value="new">New</option>
-        <option value="react">React</option>
-    </select>
-</div>
+        <!-- Charts -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>📈 Enrollments Over Time</h3>
+                <div class="chart-container">
+                    <canvas id="timeSeriesChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>🎯 Client Mix (New vs Reactivated)</h3>
+                <div class="chart-container">
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+        </div>
 
-<!-- KPIs -->
-<div class="kpis">
-<div class="kpi-card"><div>New Clients</div><div class="kpi-value" id="newCount"></div></div>
-<div class="kpi-card"><div>Reactivated</div><div class="kpi-value" id="reactCount"></div></div>
-<div class="kpi-card"><div>Revenue</div><div class="kpi-value" id="totalRevenue"></div></div>
-<div class="kpi-card"><div>Reactivation Rate</div><div class="kpi-value" id="reactRate"></div></div>
-</div>
+        <div class="charts-grid">
+            <div class="chart-card" style="grid-column: 1 / -1;">
+                <h3>🏪 Performance by Shop Location</h3>
+                <div class="chart-container">
+                    <canvas id="shopChart"></canvas>
+                </div>
+            </div>
+        </div>
 
-<!-- CHARTS -->
-<div class="charts-grid">
+        <!-- Insights -->
+        <div class="insights-section">
+            <h3>💡 Key Insights</h3>
+            <div id="insights"></div>
+        </div>
 
-<div class="chart-card">
-<h3>Trends</h3>
-<canvas id="lineChart"></canvas>
-</div>
+        <!-- Table -->
+        <div class="charts-grid">
+            <div class="table-card">
+                <h3>⭐ Performance by Shop Location</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Shop Location</th>
+                            <th>New</th>
+                            <th>Reactivated</th>
+                            <th>Total</th>
+                            <th style="text-align: right;">Revenue (ZAR)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="shopTable"></tbody>
+                </table>
+            </div>
+        </div>
 
-<div class="chart-card">
-<h3>Client Mix</h3>
-<canvas id="barChart"></canvas>
-</div>
+        <!-- Export button -->
+        <button class="export-btn" onclick="exportToExcel()">📊 Export to Excel</button>
+    </div>
 
-<div class="chart-card">
-<h3>Shop Performance</h3>
-<canvas id="shopChart"></canvas>
-</div>
+    <script>
+        // Data with Sales Group
+        const rawData = [
+            { Status: 'New', 'Sales Day': '2026/06/02', 'Sales Group': 'PUS Cape Town', 'Turnover in ZAR': 506.50 },
+            { Status: 'New', 'Sales Day': '2026/06/02', 'Sales Group': 'PUS Silverton', 'Turnover in ZAR': 423.15 },
+            { Status: 'React', 'Sales Day': '2026/06/04', 'Sales Group': 'PUS Cape Town', 'Turnover in ZAR': 264.60 },
+            { Status: 'React', 'Sales Day': '2026/06/08', 'Sales Group': 'PUS Boksburg', 'Turnover in ZAR': 197.32 },
+            { Status: 'React', 'Sales Day': '2026/06/02', 'Sales Group': 'PUS Cape Town', 'Turnover in ZAR': 232.90 },
+            { Status: 'React', 'Sales Day': '2026/06/04', 'Sales Group': 'PUS Durban', 'Turnover in ZAR': 139.78 },
+            { Status: 'React', 'Sales Day': '2026/06/04', 'Sales Group': 'PUS Cape Town Stikland', 'Turnover in ZAR': 6238.60 },
+            { Status: 'React', 'Sales Day': '2026/06/03', 'Sales Group': 'PUS Bloemfontein', 'Turnover in ZAR': 302.62 },
+            { Status: 'New', 'Sales Day': '2026/06/05', 'Sales Group': 'PUS Cape Town', 'Turnover in ZAR': 423.15 },
+            { Status: 'React', 'Sales Day': '2026/06/15', 'Sales Group': 'PUS Silverton', 'Turnover in ZAR': 210.00 },
+            { Status: 'React', 'Sales Day': '2026/06/11', 'Sales Group': 'PUS Cape Town', 'Turnover in ZAR': 500.03 },
+            { Status: 'New', 'Sales Day': '2026/06/06', 'Sales Group': 'PUS Boksburg', 'Turnover in ZAR': 312.45 },
+            { Status: 'New', 'Sales Day': '2026/06/07', 'Sales Group': 'PUS Durban', 'Turnover in ZAR': 178.90 },
+            { Status: 'New', 'Sales Day': '2026/06/08', 'Sales Group': 'PUS Cape Town', 'Turnover in ZAR': 445.67 },
+            { Status: 'New', 'Sales Day': '2026/06/09', 'Sales Group': 'PUS George', 'Turnover in ZAR': 289.55 },
+            { Status: 'React', 'Sales Day': '2026/06/10', 'Sales Group': 'PUS Silverton', 'Turnover in ZAR': 521.88 },
+            { Status: 'New', 'Sales Day': '2026/06/10', 'Sales Group': 'PUS Cape Town', 'Turnover in ZAR': 298.40 },
+            { Status: 'New', 'Sales Day': '2026/06/11', 'Sales Group': 'PUS Bloemfontein', 'Turnover in ZAR': 356.70 },
+            { Status: 'React', 'Sales Day': '2026/06/12', 'Sales Group': 'PUS Cape Town', 'Turnover in ZAR': 467.23 },
+            { Status: 'New', 'Sales Day': '2026/06/13', 'Sales Group': 'PUS Silverton', 'Turnover in ZAR': 383.12 },
+            { Status: 'New', 'Sales Day': '2026/06/14', 'Sales Group': 'PUS Cape Town', 'Turnover in ZAR': 275.88 },
+            { Status: 'React', 'Sales Day': '2026/06/14', 'Sales Group': 'PUS Boksburg', 'Turnover in ZAR': 445.60 },
+            { Status: 'New', 'Sales Day': '2026/06/15', 'Sales Group': 'PUS Cape Town', 'Turnover in ZAR': 268.35 },
+            { Status: 'React', 'Sales Day': '2026/06/15', 'Sales Group': 'PUS Silverton', 'Turnover in ZAR': 345.92 },
+            { Status: 'New', 'Sales Day': '2026/06/03', 'Sales Group': 'PUS Durban', 'Turnover in ZAR': 601.23 },
+            { Status: 'React', 'Sales Day': '2026/06/05', 'Sales Group': 'PUS Cape Town', 'Turnover in ZAR': 398.45 },
+            { Status: 'New', 'Sales Day': '2026/06/12', 'Sales Group': 'PUS Silverton', 'Turnover in ZAR': 512.67 },
+            { Status: 'React', 'Sales Day': '2026/06/13', 'Sales Group': 'PUS Cape Town Stikland', 'Turnover in ZAR': 289.34 },
+        ];
 
-</div>
+        let timeSeriesChartInstance = null;
+        let pieChartInstance = null;
+        let shopChartInstance = null;
 
-<!-- TABLE -->
-<div class="table-card" style="padding:20px;">
-<h3>Shop Breakdown</h3>
-<table width="100%">
-<thead>
-<tr><th>Shop</th><th>New</th><th>React</th><th>Revenue</th></tr>
-</thead>
-<tbody id="shopTable"></tbody>
-</table>
-</div>
+        // Initialize shop dropdown
+        function initShopDropdown() {
+            const shops = [...new Set(rawData.map(r => r['Sales Group']))].sort();
+            const select = document.getElementById('shopFilter');
+            shops.forEach(shop => {
+                const option = document.createElement('option');
+                option.value = shop;
+                option.textContent = shop;
+                select.appendChild(option);
+            });
+        }
 
-<!-- SALES REPS -->
-<div class="table-card" style="margin-top:20px; padding:20px;">
-<h3>Sales Reps</h3>
-<table width="100%">
-<thead>
-<tr><th>Rep</th><th>New</th><th>React</th><th>Total</th></tr>
-</thead>
-<tbody id="repTable"></tbody>
-</table>
-</div>
+        // Filter data
+        function filterData() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const clientType = document.getElementById('clientType').value;
+            const selectedShop = document.getElementById('shopFilter').value;
 
-<button class="export-btn" onclick="exportExcel()">Export</button>
+            return rawData.filter(row => {
+                const date = row['Sales Day'].replace(/\//g, '-');
+                const inRange = date >= startDate && date <= endDate;
+                const shopMatch = !selectedShop || row['Sales Group'] === selectedShop;
+                const typeMatch = clientType === 'both' || (clientType === 'new' && row.Status === 'New') || (clientType === 'react' && row.Status === 'React');
+                return inRange && shopMatch && typeMatch;
+            });
+        }
 
-</div>
+        // Update KPIs
+        function updateKPIs(data) {
+            const newCount = data.filter(r => r.Status === 'New').length;
+            const reactCount = data.filter(r => r.Status === 'React').length;
+            const totalRevenue = data.reduce((sum, r) => sum + r['Turnover in ZAR'], 0);
+            const reactivationRate = ((reactCount / (newCount + reactCount)) * 100).toFixed(1);
 
-<script>
-// DATA
-const rawData = [
-{Status:"New", "Sales Day":"2026/06/02","Sales Group":"Cape Town","Turnover in ZAR":500},
-{Status:"React","Sales Day":"2026/06/03","Sales Group":"Durban","Turnover in ZAR":300},
-{Status:"New","Sales Day":"2026/06/04","Sales Group":"Cape Town","Turnover in ZAR":700},
-{Status:"React","Sales Day":"2026/06/05","Sales Group":"Boksburg","Turnover in ZAR":200}
-];
+            document.getElementById('newCount').textContent = newCount;
+            document.getElementById('reactCount').textContent = reactCount;
+            document.getElementById('totalRevenue').textContent = 'R' + Math.round(totalRevenue).toLocaleString();
+            document.getElementById('reactivationRate').textContent = reactivationRate + '%';
 
-let lineChart, barChart, shopChart;
+            return { newCount, reactCount, totalRevenue, reactivationRate };
+        }
 
-// FILTER
-function filter(){
-return rawData;
-}
+        // Aggregate by shop
+        function getShopData(data) {
+            const shops = {};
+            data.forEach(row => {
+                const shop = row['Sales Group'];
+                if (!shops[shop]) {
+                    shops[shop] = { shop, 'New': 0, 'React': 0, revenue: 0 };
+                }
+                shops[shop][row.Status]++;
+                shops[shop].revenue += row['Turnover in ZAR'];
+            });
+            return Object.values(shops).sort((a, b) => b.revenue - a.revenue);
+        }
 
-// KPIs FIXED
-function updateKPIs(data){
-let n = data.filter(x=>x.Status==="New").length;
-let r = data.filter(x=>x.Status==="React").length;
-let rev = data.reduce((a,b)=>a+(Number(b["Turnover in ZAR"])||0),0);
-let rate = (n+r)?((r/(n+r))*100).toFixed(1):0;
+        // Draw time series
+        function drawTimeSeries(data) {
+            const grouping = document.getElementById('grouping').value;
+            const groups = {};
 
-document.getElementById("newCount").innerText=n;
-document.getElementById("reactCount").innerText=r;
-document.getElementById("totalRevenue").innerText="R "+rev.toLocaleString();
-document.getElementById("reactRate").innerText=rate+"%";
+            data.forEach(row => {
+                let key = row['Sales Day'];
+                if (grouping === 'weekly') {
+                    const date = new Date(row['Sales Day'].replace(/\//g, '-'));
+                    const weekStart = new Date(date);
+                    weekStart.setDate(date.getDate() - date.getDay());
+                    key = weekStart.toISOString().split('T')[0];
+                } else if (grouping === 'monthly') {
+                    key = row['Sales Day'].substring(0, 7);
+                }
 
-return {n,r,rev};
-}
+                if (!groups[key]) {
+                    groups[key] = { date: key, 'New': 0, 'React': 0 };
+                }
+                groups[key][row.Status]++;
+            });
 
-// CHART FIXED (bar instead of donut)
-function drawBar(n,r){
-if(barChart) barChart.destroy();
-barChart = new Chart(document.getElementById("barChart"),{
-type:"bar",
-data:{
-labels:["New","React"],
-datasets:[{
-data:[n,r],
-backgroundColor:["#1e40af","#b45309"]
-}]
-}
-});
-}
+            const series = Object.values(groups).sort((a, b) => new Date(a.date) - new Date(b.date));
 
-// LINE
-function drawLine(data){
-if(lineChart) lineChart.destroy();
-lineChart = new Chart(document.getElementById("lineChart"),{
-type:"line",
-data:{
-labels:data.map((_,i)=>i+1),
-datasets:[{
-label:"Clients",
-data:data.map((_,i)=>i),
-borderColor:"#667eea"
-}]
-}
-});
-}
+            const ctx = document.getElementById('timeSeriesChart').getContext('2d');
+            if (timeSeriesChartInstance) timeSeriesChartInstance.destroy();
 
-// SHOP
-function drawShop(data){
-let shops={};
-data.forEach(d=>{
-if(!shops[d["Sales Group"]]) shops[d["Sales Group"]]={n:0,r:0,rev:0};
-shops[d["Sales Group"]][d.Status==="New"?"n":"r"]++;
-shops[d["Sales Group"]].rev+=Number(d["Turnover in ZAR"])||0;
-});
+            timeSeriesChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: series.map(d => d.date),
+                    datasets: [
+                        {
+                            label: 'New Clients',
+                            data: series.map(d => d.New),
+                            borderColor: '#1e40af',
+                            backgroundColor: 'rgba(30, 64, 175, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 6,
+                            pointBackgroundColor: '#1e40af',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointHoverRadius: 8
+                        },
+                        {
+                            label: 'Reactivated',
+                            data: series.map(d => d.React),
+                            borderColor: '#b45309',
+                            backgroundColor: 'rgba(180, 83, 9, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 6,
+                            pointBackgroundColor: '#b45309',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointHoverRadius: 8
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: { size: 13, weight: '600' },
+                                color: '#2d3748'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                            ticks: { color: '#718096', font: { size: 12 } }
+                        },
+                        x: {
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                            ticks: { color: '#718096', font: { size: 12 } }
+                        }
+                    }
+                }
+            });
+        }
 
-let arr=Object.entries(shops);
+        // Draw enhanced pie chart with values
+        function drawPie(newCount, reactCount) {
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            if (pieChartInstance) pieChartInstance.destroy();
+            
+            const total = newCount + reactCount;
+            const newPercent = ((newCount / total) * 100).toFixed(0);
+            const reactPercent = ((reactCount / total) * 100).toFixed(0);
 
-if(shopChart) shopChart.destroy();
-shopChart=new Chart(document.getElementById("shopChart"),{
-type:"bar",
-data:{
-labels:arr.map(x=>x[0]),
-datasets:[
-{label:"New",data:arr.map(x=>x[1].n),backgroundColor:"#1e40af"},
-{label:"React",data:arr.map(x=>x[1].r),backgroundColor:"#b45309"}
-]
-}
-});
-}
+            pieChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [`New Clients\n${newCount} (${newPercent}%)`, `Reactivated\n${reactCount} (${reactPercent}%)`],
+                    datasets: [{
+                        data: [newCount, reactCount],
+                        backgroundColor: ['#1e40af', '#b45309'],
+                        borderColor: ['white', 'white'],
+                        borderWidth: 3,
+                        hoverOffset: 15
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: { size: 13, weight: '600' },
+                                color: '#2d3748'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
 
-// REPS
-function reps(data){
-let names=["Alex","Sam","Jordan"];
-let obj={};
+        // Draw shop performance chart
+        function drawShopChart(data) {
+            const shops = getShopData(data);
+            const ctx = document.getElementById('shopChart').getContext('2d');
+            if (shopChartInstance) shopChartInstance.destroy();
 
-data.forEach((d,i)=>{
-let rep=names[i%names.length];
-if(!obj[rep]) obj[rep]={n:0,r:0};
-obj[rep][d.Status==="New"?"n":"r"]++;
-});
+            shopChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: shops.map(s => s.shop),
+                    datasets: [
+                        {
+                            label: 'New Clients',
+                            data: shops.map(s => s.New),
+                            backgroundColor: '#1e40af',
+                            borderRadius: 8,
+                            borderSkipped: false
+                        },
+                        {
+                            label: 'Reactivated',
+                            data: shops.map(s => s.React),
+                            backgroundColor: '#b45309',
+                            borderRadius: 8,
+                            borderSkipped: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: { size: 13, weight: '600' },
+                                color: '#2d3748'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                            ticks: { color: '#718096', font: { size: 12 } }
+                        },
+                        y: {
+                            stacked: true,
+                            ticks: { color: '#718096', font: { size: 12 } }
+                        }
+                    }
+                }
+            });
+        }
 
-let tbody=document.getElementById("repTable");
-tbody.innerHTML="";
-Object.entries(obj).forEach(([k,v])=>{
-tbody.innerHTML+=`<tr><td>${k}</td><td>${v.n}</td><td>${v.r}</td><td>${v.n+v.r}</td></tr>`;
-});
-}
+        // Update table
+        function updateShopTable(data) {
+            const shops = getShopData(data);
+            const tbody = document.getElementById('shopTable');
+            tbody.innerHTML = '';
 
-// SHOP TABLE
-function table(data){
-let shops={};
-data.forEach(d=>{
-if(!shops[d["Sales Group"]]) shops[d["Sales Group"]]={n:0,r:0,rev:0};
-shops[d["Sales Group"]][d.Status==="New"?"n":"r"]++;
-shops[d["Sales Group"]].rev+=Number(d["Turnover in ZAR"])||0;
-});
+            shops.forEach(shop => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${shop.shop}</strong></td>
+                    <td class="shop-new">${shop.New}</td>
+                    <td class="shop-react">${shop.React}</td>
+                    <td>${shop.New + shop.React}</td>
+                    <td style="text-align: right; color: #047857; font-weight: 800;">R${Math.round(shop.revenue).toLocaleString()}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
 
-let tbody=document.getElementById("shopTable");
-tbody.innerHTML="";
-Object.entries(shops).forEach(([k,v])=>{
-tbody.innerHTML+=`<tr><td>${k}</td><td>${v.n}</td><td>${v.r}</td><td>R ${v.rev}</td></tr>`;
-});
-}
+        // Generate insights
+        function generateInsights(data, shops, kpis) {
+            const insights = [];
 
-// UPDATE ALL
-function update(){
-let d=filter();
-let k=updateKPIs(d);
-drawBar(k.n,k.r);
-drawLine(d);
-drawShop(d);
-table(d);
-reps(d);
-}
+            const groups = {};
+            data.forEach(row => {
+                if (!groups[row['Sales Day']]) {
+                    groups[row['Sales Day']] = { 'New': 0, 'React': 0 };
+                }
+                groups[row['Sales Day']][row.Status]++;
+            });
 
-update();
-</script>
+            const sortedDays = Object.entries(groups).sort((a, b) => (b[1].New + b[1].React) - (a[1].New + a[1].React));
+            if (sortedDays.length > 0) {
+                insights.push(`🔝 Peak enrollment day: ${sortedDays[0][0]} with ${sortedDays[0][1].New + sortedDays[0][1].React} clients`);
+            }
 
+            if (shops.length > 0) {
+                insights.push(`⭐ Top performing shop: ${shops[0].shop} with R${Math.round(shops[0].revenue).toLocaleString()}`);
+            }
+
+            insights.push(`📊 Overall mix: ${kpis.newCount} new clients (${((kpis.newCount / (kpis.newCount + kpis.reactCount)) * 100).toFixed(0)}%) vs ${kpis.reactCount} reactivated (${kpis.reactivationRate}%)`);
+
+            if (kpis.reactCount > kpis.newCount) {
+                insights.push(`📈 Strong reactivation focus - shops are successfully re-engaging customers!`);
+            } else {
+                insights.push(`🚀 Strong acquisition focus - shops are rapidly growing customer base!`);
+            }
+
+            const insightDiv = document.getElementById('insights');
+            insightDiv.innerHTML = insights.map(i => `<div class="insight">✓ ${i}</div>`).join('');
+        }
+
+        // Excel Export
+        function exportToExcel() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const clientType = document.getElementById('clientType').value;
+            const selectedShop = document.getElementById('shopFilter').value;
+            
+            const wb = XLSX.utils.book_new();
+            
+            // Summary sheet
+            const summaryData = [
+                ['Client Analytics Report'],
+                [''],
+                ['Report Period', startDate, 'to', endDate],
+                ['Filter', clientType === 'both' ? 'All client types' : (clientType === 'new' ? 'New clients only' : 'Reactivated only')],
+                ['Shop Filter', selectedShop ? selectedShop : 'All shop locations'],
+                [''],
+                ['KPI', 'Value'],
+                ['New Clients', document.getElementById('newCount').textContent],
+                ['Reactivated Clients', document.getElementById('reactCount').textContent],
+                ['Total Revenue (ZAR)', document.getElementById('totalRevenue').textContent],
+                ['Reactivation Rate', document.getElementById('reactivationRate').textContent],
+                [''],
+                ['Performance by Shop Location'],
+                ['Shop', 'New', 'Reactivated', 'Total', 'Revenue (ZAR)']
+            ];
+
+            // Add shop data
+            document.querySelectorAll('#shopTable tr').forEach(tr => {
+                const cells = tr.querySelectorAll('td');
+                summaryData.push([
+                    cells[0].textContent,
+                    cells[1].textContent,
+                    cells[2].textContent,
+                    cells[3].textContent,
+                    cells[4].textContent.replace('R', '').replace(/,/g, '')
+                ]);
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(summaryData);
+            ws['!cols'] = [25, 15, 15, 15, 20];
+            XLSX.utils.book_append_sheet(wb, ws, 'Summary');
+            
+            // Detailed data sheet
+            const filtered = filterData();
+            const detailData = [['Status', 'Date', 'Shop Location', 'Revenue (ZAR)']];
+            filtered.forEach(row => {
+                detailData.push([row.Status, row['Sales Day'], row['Sales Group'], row['Turnover in ZAR']]);
+            });
+            
+            const detailWs = XLSX.utils.aoa_to_sheet(detailData);
+            detailWs['!cols'] = [15, 15, 25, 20];
+            XLSX.utils.book_append_sheet(wb, detailWs, 'Detailed Data');
+            
+            XLSX.writeFile(wb, `Client-Analytics-${new Date().toISOString().split('T')[0]}.xlsx`);
+        }
+
+        // Main update
+        function updateDashboard() {
+            const filtered = filterData();
+            const kpis = updateKPIs(filtered);
+            const shops = getShopData(filtered);
+            drawTimeSeries(filtered);
+            drawPie(kpis.newCount, kpis.reactCount);
+            drawShopChart(filtered);
+            updateShopTable(filtered);
+            generateInsights(filtered, shops, kpis);
+        }
+
+        // Event listeners
+        document.getElementById('startDate').addEventListener('change', updateDashboard);
+        document.getElementById('endDate').addEventListener('change', updateDashboard);
+        document.getElementById('grouping').addEventListener('change', updateDashboard);
+        document.getElementById('clientType').addEventListener('change', updateDashboard);
+        document.getElementById('shopFilter').addEventListener('change', updateDashboard);
+
+        // Initialize
+        initShopDropdown();
+        updateDashboard();
+    </script>
 </body>
 </html>
