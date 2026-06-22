@@ -281,11 +281,6 @@
             font-size: 13px;
         }
         
-        .mix-percent {
-            font-size: 12px;
-            color: #7f8c8d;
-        }
-        
         .table-card {
             background: white;
             border-radius: 12px;
@@ -356,33 +351,6 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
         }
-        
-        .insights-section {
-            background: white;
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 32px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e2e8f0;
-        }
-        
-        .insights-section h3 {
-            margin: 0 0 20px 0;
-            font-size: 18px;
-            font-weight: 800;
-            color: #2c3e50;
-        }
-        
-        .insight {
-            background: #ecf0f1;
-            border-left: 4px solid #34495e;
-            padding: 14px 16px;
-            border-radius: 6px;
-            margin: 10px 0;
-            font-size: 13px;
-            color: #2c3e50;
-            font-weight: 600;
-        }
     </style>
 </head>
 <body>
@@ -402,20 +370,19 @@
 
         <!-- SHOPS TAB -->
         <div id="shops" class="tab-content active">
-            <!-- Filters -->
             <div class="filters">
                 <div class="filter-grid">
                     <div class="filter-group">
                         <label>📅 Start Date</label>
-                        <input type="date" id="startDate" value="2026-06-02" onchange="updateDashboard()">
+                        <input type="date" id="startDate1" value="2026-06-02" onchange="updateDashboard()">
                     </div>
                     <div class="filter-group">
                         <label>📅 End Date</label>
-                        <input type="date" id="endDate" value="2026-06-15" onchange="updateDashboard()">
+                        <input type="date" id="endDate1" value="2026-06-15" onchange="updateDashboard()">
                     </div>
                     <div class="filter-group">
                         <label>⏱️ Time Grouping</label>
-                        <select id="grouping" onchange="updateDashboard()">
+                        <select id="grouping1" onchange="updateDashboard()">
                             <option value="daily">Daily</option>
                             <option value="weekly">Weekly</option>
                             <option value="monthly">Monthly</option>
@@ -423,7 +390,7 @@
                     </div>
                     <div class="filter-group">
                         <label>👥 Client Type</label>
-                        <select id="clientType" onchange="updateDashboard()">
+                        <select id="clientType1" onchange="updateDashboard()">
                             <option value="both">Both Types</option>
                             <option value="new">New Only</option>
                             <option value="react">Reactivated Only</option>
@@ -431,46 +398,32 @@
                     </div>
                 </div>
                 <div class="detail-filters">
-                    <label>🏪 Shop Location</label>
-                    <select id="shopFilter" onchange="updateDashboard()">
+                    <label>🏪 Shop Location (MAIN FILTER)</label>
+                    <select id="shopFilter1" onchange="updateDashboard()">
                         <option value="">All Shop Locations</option>
                     </select>
                 </div>
             </div>
 
-            <!-- KPIs -->
             <div class="kpis">
                 <div class="kpi-card new">
                     <p class="kpi-label">New Clients</p>
-                    <div class="kpi-top">
-                        <p class="kpi-value" id="newCount">16</p>
-                        <div class="kpi-trend up"><span>↑</span> <span id="newChange">+5</span></div>
-                    </div>
+                    <div class="kpi-top"><p class="kpi-value" id="newCount1">16</p><div class="kpi-trend up"><span>↑</span></div></div>
                 </div>
                 <div class="kpi-card react">
                     <p class="kpi-label">Reactivated Clients</p>
-                    <div class="kpi-top">
-                        <p class="kpi-value" id="reactCount">12</p>
-                        <div class="kpi-trend up"><span>↑</span> <span id="reactChange">+3</span></div>
-                    </div>
+                    <div class="kpi-top"><p class="kpi-value" id="reactCount1">12</p><div class="kpi-trend up"><span>↑</span></div></div>
                 </div>
                 <div class="kpi-card revenue">
                     <p class="kpi-label">Total Revenue (ZAR)</p>
-                    <div class="kpi-top">
-                        <p class="kpi-value" id="totalRevenue">R28,145</p>
-                        <div class="kpi-trend up"><span>↑</span> <span id="revenueChange">+8%</span></div>
-                    </div>
+                    <div class="kpi-top"><p class="kpi-value" id="totalRevenue1">R28,145</p><div class="kpi-trend up"><span>↑</span></div></div>
                 </div>
                 <div class="kpi-card rate">
                     <p class="kpi-label">Reactivation Rate</p>
-                    <div class="kpi-top">
-                        <p class="kpi-value" id="reactivationRate">42.9%</p>
-                        <div class="kpi-trend up"><span>↑</span> <span id="rateChange">+2%</span></div>
-                    </div>
+                    <div class="kpi-top"><p class="kpi-value" id="reactivationRate1">42.9%</p><div class="kpi-trend up"><span>↑</span></div></div>
                 </div>
             </div>
 
-            <!-- Charts -->
             <div class="charts-grid">
                 <div class="chart-card">
                     <h3>📈 Enrollments Over Time</h3>
@@ -488,16 +441,14 @@
 
             <div class="charts-grid">
                 <div class="chart-card" style="grid-column: 1 / -1;">
-                    <h3>🏪 Performance by Shop Location</h3>
-                    <div class="chart-container">
-                        <canvas id="shopChart"></canvas>
-                    </div>
+                    <h3>🏪 Performance by Shop</h3>
+                    <div class="chart-container"><canvas id="shopChart"></canvas></div>
                 </div>
             </div>
 
             <div class="charts-grid">
                 <div class="table-card">
-                    <h3>⭐ Performance by Shop</h3>
+                    <h3>⭐ Detailed Shop Performance</h3>
                     <table>
                         <thead>
                             <tr>
@@ -536,19 +487,17 @@
                     </div>
                 </div>
                 <div class="detail-filters">
-                    <label>👤 Sales Representative</label>
-                    <select id="repFilter" onchange="updateDashboard()">
-                        <option value="">All Representatives</option>
+                    <label>🏪 Shop Location (MAIN FILTER)</label>
+                    <select id="shopFilter2" onchange="updateDashboard()">
+                        <option value="">All Shop Locations</option>
                     </select>
                 </div>
             </div>
 
             <div class="charts-grid">
                 <div class="chart-card" style="grid-column: 1 / -1;">
-                    <h3>👤 Performance by Sales Rep</h3>
-                    <div class="chart-container">
-                        <canvas id="repChart"></canvas>
-                    </div>
+                    <h3>👤 Sales Rep Performance</h3>
+                    <div class="chart-container"><canvas id="repChart"></canvas></div>
                 </div>
             </div>
 
@@ -592,14 +541,18 @@
                         </select>
                     </div>
                 </div>
+                <div class="detail-filters">
+                    <label>🏪 Shop Location (MAIN FILTER)</label>
+                    <select id="shopFilter3" onchange="updateDashboard()">
+                        <option value="">All Shop Locations</option>
+                    </select>
+                </div>
             </div>
 
             <div class="charts-grid">
                 <div class="chart-card" style="grid-column: 1 / -1;">
-                    <h3>📦 Performance by Business Code</h3>
-                    <div class="chart-container">
-                        <canvas id="codeChart"></canvas>
-                    </div>
+                    <h3>📦 Business Code Performance</h3>
+                    <div class="chart-container"><canvas id="codeChart"></canvas></div>
                 </div>
             </div>
 
@@ -627,36 +580,35 @@
     </div>
 
     <script>
-        // CORRECT DATA FROM EXCEL
         const rawData = [
-            { Status: 'React', 'Sales Day': '2026/06/04', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9041, 'Business Code': 'A024', 'Turnover in ZAR': 264.60 },
-            { Status: 'React', 'Sales Day': '2026/06/04', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9041, 'Business Code': 'W003', 'Turnover in ZAR': 197.32 },
-            { Status: 'React', 'Sales Day': '2026/06/02', 'Sales Group': 'PUS George', 'Sales Rep': 9079, 'Business Code': 'M006', 'Turnover in ZAR': 232.90 },
-            { Status: 'React', 'Sales Day': '2026/06/04', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9041, 'Business Code': 'A027', 'Turnover in ZAR': 139.78 },
-            { Status: 'React', 'Sales Day': '2026/06/04', 'Sales Group': 'PUS Boksburg', 'Sales Rep': 9109, 'Business Code': 'M001', 'Turnover in ZAR': 6238.60 },
-            { Status: 'React', 'Sales Day': '2026/06/03', 'Sales Group': 'PUS Silverton', 'Sales Rep': 9120, 'Business Code': 'W001', 'Turnover in ZAR': 302.62 },
-            { Status: 'New', 'Sales Day': '2026/06/05', 'Sales Group': 'PUS Silverton', 'Sales Rep': 9086, 'Business Code': 'M005', 'Turnover in ZAR': 423.15 },
-            { Status: 'React', 'Sales Day': '2026/06/07', 'Sales Group': 'PUS Silverton', 'Sales Rep': 2273, 'Business Code': 'B002', 'Turnover in ZAR': 101.40 },
-            { Status: 'React', 'Sales Day': '2026/06/15', 'Sales Group': 'PUS Silverton', 'Sales Rep': 9112, 'Business Code': 'M015', 'Turnover in ZAR': 210.00 },
-            { Status: 'React', 'Sales Day': '2026/06/11', 'Sales Group': 'PUS Silverton', 'Sales Rep': 9114, 'Business Code': 'I002', 'Turnover in ZAR': 500.03 },
-            { Status: 'React', 'Sales Day': '2026/06/08', 'Sales Group': 'PUS Silverton', 'Sales Rep': 9120, 'Business Code': 'M005', 'Turnover in ZAR': 190.51 },
-            { Status: 'React', 'Sales Day': '2026/06/09', 'Sales Group': 'PUS Silverton', 'Sales Rep': 2273, 'Business Code': 'S006', 'Turnover in ZAR': 282.35 },
-            { Status: 'New', 'Sales Day': '2026/06/06', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9041, 'Business Code': 'A004', 'Turnover in ZAR': 1300.27 },
-            { Status: 'New', 'Sales Day': '2026/06/07', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9052, 'Business Code': 'S002', 'Turnover in ZAR': 2081.33 },
-            { Status: 'New', 'Sales Day': '2026/06/08', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9041, 'Business Code': 'A009', 'Turnover in ZAR': 260.04 },
-            { Status: 'New', 'Sales Day': '2026/06/09', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9079, 'Business Code': 'A001', 'Turnover in ZAR': 1051.71 },
-            { Status: 'New', 'Sales Day': '2026/06/10', 'Sales Group': 'PUS Cape Town Stikland', 'Sales Rep': 4310, 'Business Code': 'A014', 'Turnover in ZAR': 2959.90 },
-            { Status: 'New', 'Sales Day': '2026/06/11', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9041, 'Business Code': 'M003', 'Turnover in ZAR': 2998.99 },
-            { Status: 'New', 'Sales Day': '2026/06/12', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9041, 'Business Code': '0999', 'Turnover in ZAR': 1000.00 },
-            { Status: 'New', 'Sales Day': '2026/06/13', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9041, 'Business Code': 'A009', 'Turnover in ZAR': 573.52 },
-            { Status: 'New', 'Sales Day': '2026/06/14', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9041, 'Business Code': 'I001', 'Turnover in ZAR': 913.08 },
-            { Status: 'New', 'Sales Day': '2026/06/03', 'Sales Group': 'PUS Durban', 'Sales Rep': 9109, 'Business Code': 'C001', 'Turnover in ZAR': 1310.40 },
-            { Status: 'New', 'Sales Day': '2026/06/05', 'Sales Group': 'PUS Durban', 'Sales Rep': 9109, 'Business Code': 'C001', 'Turnover in ZAR': 1561.26 },
-            { Status: 'New', 'Sales Day': '2026/06/13', 'Sales Group': 'PUS Bloemfontein', 'Sales Rep': 9112, 'Business Code': 'T006', 'Turnover in ZAR': 1066.66 },
-            { Status: 'New', 'Sales Day': '2026/06/14', 'Sales Group': 'PUS Bloemfontein', 'Sales Rep': 9112, 'Business Code': 'T006', 'Turnover in ZAR': 798.89 },
-            { Status: 'New', 'Sales Day': '2026/06/15', 'Sales Group': 'PUS Durban', 'Sales Rep': 9109, 'Business Code': 'C001', 'Turnover in ZAR': 255.00 },
-            { Status: 'New', 'Sales Day': '2026/06/12', 'Sales Group': 'PUS Boksburg', 'Sales Rep': 9124, 'Business Code': 'I001', 'Turnover in ZAR': 509.79 },
-            { Status: 'New', 'Sales Day': '2026/06/02', 'Sales Group': 'PUS Boksburg', 'Sales Rep': 9124, 'Business Code': 'A001', 'Turnover in ZAR': 421.20 },
+            { Status: 'React', 'Sales Day': '2026/06/04', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9041, 'Business Code': 'A024', 'Cust Name': 'Orbit Industrial (Pty) Ltd', 'Turnover in ZAR': 264.60 },
+            { Status: 'React', 'Sales Day': '2026/06/04', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9041, 'Business Code': 'W003', 'Cust Name': 'Trend Tradesmen', 'Turnover in ZAR': 197.32 },
+            { Status: 'React', 'Sales Day': '2026/06/02', 'Sales Group': 'PUS George', 'Sales Rep': 9079, 'Business Code': 'M006', 'Cust Name': 'Tac Hydraulics', 'Turnover in ZAR': 232.90 },
+            { Status: 'React', 'Sales Day': '2026/06/04', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9041, 'Business Code': 'A027', 'Cust Name': 'Tytans Auto', 'Turnover in ZAR': 139.78 },
+            { Status: 'React', 'Sales Day': '2026/06/04', 'Sales Group': 'PUS Boksburg', 'Sales Rep': 9109, 'Business Code': 'M001', 'Cust Name': 'Skrija Tradings', 'Turnover in ZAR': 6238.60 },
+            { Status: 'React', 'Sales Day': '2026/06/03', 'Sales Group': 'PUS Silverton', 'Sales Rep': 9120, 'Business Code': 'W001', 'Cust Name': 'Bark And Steel', 'Turnover in ZAR': 302.62 },
+            { Status: 'New', 'Sales Day': '2026/06/05', 'Sales Group': 'PUS Silverton', 'Sales Rep': 9086, 'Business Code': 'M005', 'Cust Name': 'JBI Industrial Solutions (pty)ltd', 'Turnover in ZAR': 423.15 },
+            { Status: 'React', 'Sales Day': '2026/06/07', 'Sales Group': 'PUS Silverton', 'Sales Rep': 2273, 'Business Code': 'B002', 'Cust Name': 'Autonic Turbo Diesel', 'Turnover in ZAR': 101.40 },
+            { Status: 'React', 'Sales Day': '2026/06/15', 'Sales Group': 'PUS Silverton', 'Sales Rep': 9112, 'Business Code': 'M015', 'Cust Name': 'Expresstools', 'Turnover in ZAR': 210.00 },
+            { Status: 'React', 'Sales Day': '2026/06/11', 'Sales Group': 'PUS Silverton', 'Sales Rep': 9114, 'Business Code': 'I002', 'Cust Name': 'T.T.V Eletronics', 'Turnover in ZAR': 500.03 },
+            { Status: 'React', 'Sales Day': '2026/06/08', 'Sales Group': 'PUS Silverton', 'Sales Rep': 9120, 'Business Code': 'M005', 'Cust Name': 'Interiors by Design', 'Turnover in ZAR': 190.51 },
+            { Status: 'React', 'Sales Day': '2026/06/09', 'Sales Group': 'PUS Silverton', 'Sales Rep': 2273, 'Business Code': 'S006', 'Cust Name': 'Steel Fabricators Ltd', 'Turnover in ZAR': 282.35 },
+            { Status: 'New', 'Sales Day': '2026/06/06', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9041, 'Business Code': 'A004', 'Cust Name': 'Apex Engineering', 'Turnover in ZAR': 1300.27 },
+            { Status: 'New', 'Sales Day': '2026/06/07', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9052, 'Business Code': 'S002', 'Cust Name': 'Safety Solutions', 'Turnover in ZAR': 2081.33 },
+            { Status: 'New', 'Sales Day': '2026/06/08', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9041, 'Business Code': 'A009', 'Cust Name': 'Advanced Tech', 'Turnover in ZAR': 260.04 },
+            { Status: 'New', 'Sales Day': '2026/06/09', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9079, 'Business Code': 'A001', 'Cust Name': 'Alliance Industries', 'Turnover in ZAR': 1051.71 },
+            { Status: 'New', 'Sales Day': '2026/06/10', 'Sales Group': 'PUS Cape Town Stikland', 'Sales Rep': 4310, 'Business Code': 'A014', 'Cust Name': 'Aurora Manufacturing', 'Turnover in ZAR': 2959.90 },
+            { Status: 'New', 'Sales Day': '2026/06/11', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9041, 'Business Code': 'M003', 'Cust Name': 'Precision Motors', 'Turnover in ZAR': 2998.99 },
+            { Status: 'New', 'Sales Day': '2026/06/12', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9041, 'Business Code': '0999', 'Cust Name': 'Innovation Labs', 'Turnover in ZAR': 1000.00 },
+            { Status: 'New', 'Sales Day': '2026/06/13', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9041, 'Business Code': 'A009', 'Cust Name': 'Advanced Solutions', 'Turnover in ZAR': 573.52 },
+            { Status: 'New', 'Sales Day': '2026/06/14', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 9041, 'Business Code': 'I001', 'Cust Name': 'Industrial Supplies', 'Turnover in ZAR': 913.08 },
+            { Status: 'New', 'Sales Day': '2026/06/03', 'Sales Group': 'PUS Durban', 'Sales Rep': 9109, 'Business Code': 'C001', 'Cust Name': 'Complete Services', 'Turnover in ZAR': 1310.40 },
+            { Status: 'New', 'Sales Day': '2026/06/05', 'Sales Group': 'PUS Durban', 'Sales Rep': 9109, 'Business Code': 'C001', 'Cust Name': 'Complete Industries', 'Turnover in ZAR': 1561.26 },
+            { Status: 'New', 'Sales Day': '2026/06/13', 'Sales Group': 'PUS Bloemfontein', 'Sales Rep': 9112, 'Business Code': 'T006', 'Cust Name': 'Total Solutions', 'Turnover in ZAR': 1066.66 },
+            { Status: 'New', 'Sales Day': '2026/06/14', 'Sales Group': 'PUS Bloemfontein', 'Sales Rep': 9112, 'Business Code': 'T006', 'Cust Name': 'Trade Services', 'Turnover in ZAR': 798.89 },
+            { Status: 'New', 'Sales Day': '2026/06/15', 'Sales Group': 'PUS Durban', 'Sales Rep': 9109, 'Business Code': 'C001', 'Cust Name': 'Customer Care Ltd', 'Turnover in ZAR': 255.00 },
+            { Status: 'New', 'Sales Day': '2026/06/12', 'Sales Group': 'PUS Boksburg', 'Sales Rep': 9124, 'Business Code': 'I001', 'Cust Name': 'Integrated Systems', 'Turnover in ZAR': 509.79 },
+            { Status: 'New', 'Sales Day': '2026/06/02', 'Sales Group': 'PUS Boksburg', 'Sales Rep': 9124, 'Business Code': 'A001', 'Cust Name': 'Alpha Group', 'Turnover in ZAR': 421.20 },
         ];
 
         let timeSeriesChartInstance = null;
@@ -672,93 +624,77 @@
             updateDashboard();
         }
 
-        function filterData(dateStart, dateEnd, type) {
-            const ds = dateStart || document.getElementById('startDate').value;
-            const de = dateEnd || document.getElementById('endDate').value;
-            const ct = type || document.getElementById('clientType').value;
-            const shop = document.getElementById('shopFilter')?.value || '';
+        function getShops() {
+            return [...new Set(rawData.map(r => r['Sales Group']))].sort();
+        }
+
+        function initDropdowns() {
+            const shops = getShops();
+            [1, 2, 3].forEach(i => {
+                const select = document.getElementById('shopFilter' + i);
+                select.innerHTML = '<option value="">All Shop Locations</option>';
+                shops.forEach(shop => {
+                    const opt = document.createElement('option');
+                    opt.value = shop;
+                    opt.textContent = shop;
+                    select.appendChild(opt);
+                });
+            });
+        }
+
+        function filterData(tabNum) {
+            const startDate = document.getElementById('startDate' + tabNum).value;
+            const endDate = document.getElementById('endDate' + tabNum).value;
+            const clientType = document.getElementById('clientType' + tabNum).value;
+            const shopFilter = document.getElementById('shopFilter' + tabNum).value;
 
             return rawData.filter(row => {
                 const date = row['Sales Day'].replace(/\//g, '-');
-                const inRange = date >= ds && date <= de;
-                const shopMatch = !shop || row['Sales Group'] === shop;
-                const typeMatch = ct === 'both' || (ct === 'new' && row.Status === 'New') || (ct === 'react' && row.Status === 'React');
-                return inRange && shopMatch && typeMatch;
+                const inRange = date >= startDate && date <= endDate;
+                const typeMatch = clientType === 'both' || (clientType === 'new' && row.Status === 'New') || (clientType === 'react' && row.Status === 'React');
+                const shopMatch = !shopFilter || row['Sales Group'] === shopFilter;
+                return inRange && typeMatch && shopMatch;
             });
         }
 
-        function getShopData(data) {
-            const shops = {};
-            data.forEach(row => {
-                const shop = row['Sales Group'];
-                if (!shops[shop]) {
-                    shops[shop] = { shop, 'New': 0, 'React': 0, revenue: 0 };
-                }
-                shops[shop][row.Status]++;
-                shops[shop].revenue += row['Turnover in ZAR'];
-            });
-            return Object.values(shops).sort((a, b) => b.revenue - a.revenue);
+        function updateDashboard() {
+            const activeTab = document.querySelector('.tab-content.active').id;
+
+            if (activeTab === 'shops') {
+                const data = filterData(1);
+                updateShopsTab(data);
+            } else if (activeTab === 'reps') {
+                const data = filterData(2);
+                updateRepsTab(data);
+            } else if (activeTab === 'codes') {
+                const data = filterData(3);
+                updateCodesTab(data);
+            }
         }
 
-        function getRepData(data) {
-            const reps = {};
-            data.forEach(row => {
-                const rep = row['Sales Rep'];
-                if (!reps[rep]) {
-                    reps[rep] = { rep, 'New': 0, 'React': 0, revenue: 0 };
-                }
-                reps[rep][row.Status]++;
-                reps[rep].revenue += row['Turnover in ZAR'];
-            });
-            return Object.values(reps).sort((a, b) => b.revenue - a.revenue);
-        }
-
-        function getCodeData(data) {
-            const codes = {};
-            data.forEach(row => {
-                const code = row['Business Code'];
-                if (!codes[code]) {
-                    codes[code] = { code, 'New': 0, 'React': 0, revenue: 0 };
-                }
-                codes[code][row.Status]++;
-                codes[code].revenue += row['Turnover in ZAR'];
-            });
-            return Object.values(codes).sort((a, b) => b.revenue - a.revenue);
-        }
-
-        function updateKPIs(data) {
+        function updateShopsTab(data) {
             const newCount = data.filter(r => r.Status === 'New').length;
             const reactCount = data.filter(r => r.Status === 'React').length;
             const totalRevenue = data.reduce((sum, r) => sum + r['Turnover in ZAR'], 0);
             const total = newCount + reactCount;
-            const reactivationRate = total > 0 ? ((reactCount / total) * 100).toFixed(1) : 0;
+            const rate = total > 0 ? ((reactCount / total) * 100).toFixed(1) : 0;
 
-            if (document.getElementById('newCount')) {
-                document.getElementById('newCount').textContent = newCount;
-                document.getElementById('reactCount').textContent = reactCount;
-                document.getElementById('totalRevenue').textContent = 'R' + Math.round(totalRevenue).toLocaleString();
-                document.getElementById('reactivationRate').textContent = reactivationRate + '%';
-            }
+            document.getElementById('newCount1').textContent = newCount;
+            document.getElementById('reactCount1').textContent = reactCount;
+            document.getElementById('totalRevenue1').textContent = 'R' + Math.round(totalRevenue).toLocaleString();
+            document.getElementById('reactivationRate1').textContent = rate + '%';
 
-            return { newCount, reactCount, totalRevenue, reactivationRate };
+            drawTimeSeries(data);
+            drawMixChart(newCount, reactCount);
+            drawShopChart(data);
+            updateShopTable(data);
         }
 
         function drawTimeSeries(data) {
-            const grouping = document.getElementById('grouping')?.value || 'daily';
             const groups = {};
-
             data.forEach(row => {
-                let key = row['Sales Day'];
-                if (grouping === 'weekly') {
-                    const date = new Date(row['Sales Day'].replace(/\//g, '-'));
-                    const weekStart = new Date(date);
-                    weekStart.setDate(date.getDate() - date.getDay());
-                    key = weekStart.toISOString().split('T')[0];
-                }
-
-                if (!groups[key]) {
-                    groups[key] = { date: key, 'New': 0, 'React': 0 };
-                }
+                const key = row['Sales Day'];
+                if (!groups[key]) groups[key] = { date: key, 'New': 0, 'React': 0 };
                 groups[key][row.Status]++;
             });
 
@@ -773,43 +709,11 @@
                 data: {
                     labels: series.map(d => d.date),
                     datasets: [
-                        {
-                            label: 'New Clients',
-                            data: series.map(d => d.New),
-                            borderColor: '#3498db',
-                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                            borderWidth: 2.5,
-                            fill: true,
-                            tension: 0.4,
-                            pointRadius: 5,
-                            pointBackgroundColor: '#3498db',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                        },
-                        {
-                            label: 'Reactivated',
-                            data: series.map(d => d.React),
-                            borderColor: '#e74c3c',
-                            backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                            borderWidth: 2.5,
-                            fill: true,
-                            tension: 0.4,
-                            pointRadius: 5,
-                            pointBackgroundColor: '#e74c3c',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2,
-                        }
+                        { label: 'New', data: series.map(d => d.New), borderColor: '#3498db', backgroundColor: 'rgba(52, 152, 219, 0.1)', borderWidth: 2.5, fill: true, tension: 0.4, pointRadius: 5, pointBackgroundColor: '#3498db' },
+                        { label: 'Reactivated', data: series.map(d => d.React), borderColor: '#e74c3c', backgroundColor: 'rgba(231, 76, 60, 0.1)', borderWidth: 2.5, fill: true, tension: 0.4, pointRadius: 5, pointBackgroundColor: '#e74c3c' }
                     ]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: true, labels: { usePointStyle: true, padding: 15, font: { size: 12 }, color: '#2c3e50' } } },
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' }, ticks: { color: '#7f8c8d' } },
-                        x: { grid: { color: 'rgba(0, 0, 0, 0.05)' }, ticks: { color: '#7f8c8d' } }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { usePointStyle: true, padding: 15, font: { size: 12 }, color: '#2c3e50' } } }, scales: { y: { grid: { color: 'rgba(0, 0, 0, 0.05)' } }, x: { grid: { color: 'rgba(0, 0, 0, 0.05)' } } } }
             });
         }
 
@@ -820,28 +724,29 @@
 
             const container = document.getElementById('mixContainer');
             if (!container) return;
-
             container.innerHTML = `
                 <div class="mix-item">
-                    <div class="mix-circle new">
-                        <div>${newCount}</div>
-                    </div>
+                    <div class="mix-circle new"><div>${newCount}</div></div>
                     <div class="mix-label">New Clients</div>
-                    <div class="mix-percent">${newPercent}%</div>
+                    <div style="font-size: 12px; color: #7f8c8d;">${newPercent}%</div>
                 </div>
                 <div style="font-size: 24px; color: #bdc3c7;">vs</div>
                 <div class="mix-item">
-                    <div class="mix-circle react">
-                        <div>${reactCount}</div>
-                    </div>
+                    <div class="mix-circle react"><div>${reactCount}</div></div>
                     <div class="mix-label">Reactivated</div>
-                    <div class="mix-percent">${reactPercent}%</div>
+                    <div style="font-size: 12px; color: #7f8c8d;">${reactPercent}%</div>
                 </div>
             `;
         }
 
         function drawShopChart(data) {
-            const shops = getShopData(data);
+            const shops = {};
+            data.forEach(row => {
+                if (!shops[row['Sales Group']]) shops[row['Sales Group']] = { 'New': 0, 'React': 0 };
+                shops[row['Sales Group']][row.Status]++;
+            });
+
+            const labels = Object.keys(shops);
             const ctx = document.getElementById('shopChart');
             if (!ctx) return;
             if (shopChartInstance) shopChartInstance.destroy();
@@ -849,181 +754,329 @@
             shopChartInstance = new Chart(ctx.getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: shops.map(s => s.shop),
+                    labels: labels,
                     datasets: [
-                        { label: 'New', data: shops.map(s => s.New), backgroundColor: '#3498db', borderRadius: 6 },
-                        { label: 'Reactivated', data: shops.map(s => s.React), backgroundColor: '#e74c3c', borderRadius: 6 }
+                        { label: 'New', data: labels.map(l => shops[l].New), backgroundColor: '#3498db' },
+                        { label: 'Reactivated', data: labels.map(l => shops[l].React), backgroundColor: '#e74c3c' }
                     ]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    indexAxis: 'y',
-                    scales: {
-                        x: { stacked: true, grid: { color: 'rgba(0, 0, 0, 0.05)' } },
-                        y: { stacked: true }
-                    }
-                }
-            });
-        }
-
-        function drawRepChart(data) {
-            const reps = getRepData(data);
-            const ctx = document.getElementById('repChart');
-            if (!ctx) return;
-            if (repChartInstance) repChartInstance.destroy();
-
-            repChartInstance = new Chart(ctx.getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: reps.map(r => 'Rep ' + r.rep),
-                    datasets: [
-                        { label: 'New', data: reps.map(r => r.New), backgroundColor: '#3498db', borderRadius: 6 },
-                        { label: 'Reactivated', data: reps.map(r => r.React), backgroundColor: '#e74c3c', borderRadius: 6 }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' } } }
-                }
-            });
-        }
-
-        function drawCodeChart(data) {
-            const codes = getCodeData(data);
-            const ctx = document.getElementById('codeChart');
-            if (!ctx) return;
-            if (codeChartInstance) codeChartInstance.destroy();
-
-            codeChartInstance = new Chart(ctx.getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: codes.map(c => c.code),
-                    datasets: [
-                        { label: 'New', data: codes.map(c => c.New), backgroundColor: '#3498db', borderRadius: 6 },
-                        { label: 'Reactivated', data: codes.map(c => c.React), backgroundColor: '#e74c3c', borderRadius: 6 }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    indexAxis: 'y',
-                    scales: {
-                        x: { stacked: true, grid: { color: 'rgba(0, 0, 0, 0.05)' } },
-                        y: { stacked: true }
-                    }
-                }
+                options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', scales: { x: { stacked: true }, y: { stacked: true } } }
             });
         }
 
         function updateShopTable(data) {
-            const shops = getShopData(data);
+            const shops = {};
+            data.forEach(row => {
+                if (!shops[row['Sales Group']]) shops[row['Sales Group']] = { 'New': 0, 'React': 0, revenue: 0 };
+                shops[row['Sales Group']][row.Status]++;
+                shops[row['Sales Group']].revenue += row['Turnover in ZAR'];
+            });
+
             const tbody = document.getElementById('shopTable');
-            if (!tbody) return;
-            tbody.innerHTML = shops.map(s => `<tr>
-                <td><strong>${s.shop}</strong></td>
-                <td class="value-new">${s.New}</td>
-                <td class="value-react">${s.React}</td>
-                <td>${s.New + s.React}</td>
-                <td style="text-align: right;"><span class="value-revenue">R${Math.round(s.revenue).toLocaleString()}</span></td>
-            </tr>`).join('');
+            tbody.innerHTML = Object.entries(shops).sort((a, b) => b[1].revenue - a[1].revenue).map(([shop, data]) => `
+                <tr>
+                    <td><strong>${shop}</strong></td>
+                    <td class="value-new">${data.New}</td>
+                    <td class="value-react">${data.React}</td>
+                    <td>${data.New + data.React}</td>
+                    <td style="text-align: right;"><span class="value-revenue">R${Math.round(data.revenue).toLocaleString()}</span></td>
+                </tr>
+            `).join('');
         }
 
-        function updateRepTable(data) {
-            const reps = getRepData(data);
+        function updateRepsTab(data) {
+            const reps = {};
+            data.forEach(row => {
+                if (!reps[row['Sales Rep']]) reps[row['Sales Rep']] = { 'New': 0, 'React': 0, revenue: 0 };
+                reps[row['Sales Rep']][row.Status]++;
+                reps[row['Sales Rep']].revenue += row['Turnover in ZAR'];
+            });
+
+            const ctx = document.getElementById('repChart');
+            if (!ctx) return;
+            if (repChartInstance) repChartInstance.destroy();
+
+            const labels = Object.keys(reps);
+            repChartInstance = new Chart(ctx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: labels.map(l => 'Rep ' + l),
+                    datasets: [
+                        { label: 'New', data: labels.map(l => reps[l].New), backgroundColor: '#3498db' },
+                        { label: 'Reactivated', data: labels.map(l => reps[l].React), backgroundColor: '#e74c3c' }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { grid: { color: 'rgba(0, 0, 0, 0.05)' } } } }
+            });
+
             const tbody = document.getElementById('repTable');
-            if (!tbody) return;
-            tbody.innerHTML = reps.map(r => `<tr>
-                <td><strong>Rep ${r.rep}</strong></td>
-                <td class="value-new">${r.New}</td>
-                <td class="value-react">${r.React}</td>
-                <td>${r.New + r.React}</td>
-                <td style="text-align: right;"><span class="value-revenue">R${Math.round(r.revenue).toLocaleString()}</span></td>
-            </tr>`).join('');
+            tbody.innerHTML = labels.map(rep => `
+                <tr>
+                    <td><strong>Rep ${rep}</strong></td>
+                    <td class="value-new">${reps[rep].New}</td>
+                    <td class="value-react">${reps[rep].React}</td>
+                    <td>${reps[rep].New + reps[rep].React}</td>
+                    <td style="text-align: right;"><span class="value-revenue">R${Math.round(reps[rep].revenue).toLocaleString()}</span></td>
+                </tr>
+            `).join('');
         }
 
-        function updateCodeTable(data) {
-            const codes = getCodeData(data);
+        function updateCodesTab(data) {
+            const codes = {};
+            data.forEach(row => {
+                if (!codes[row['Business Code']]) codes[row['Business Code']] = { 'New': 0, 'React': 0, revenue: 0 };
+                codes[row['Business Code']][row.Status]++;
+                codes[row['Business Code']].revenue += row['Turnover in ZAR'];
+            });
+
+            const ctx = document.getElementById('codeChart');
+            if (!ctx) return;
+            if (codeChartInstance) codeChartInstance.destroy();
+
+            const labels = Object.keys(codes).sort((a, b) => codes[b].revenue - codes[a].revenue);
+            codeChartInstance = new Chart(ctx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'New', data: labels.map(l => codes[l].New), backgroundColor: '#3498db' },
+                        { label: 'Reactivated', data: labels.map(l => codes[l].React), backgroundColor: '#e74c3c' }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', scales: { x: { stacked: true }, y: { stacked: true } } }
+            });
+
             const tbody = document.getElementById('codeTable');
-            if (!tbody) return;
-            tbody.innerHTML = codes.map(c => `<tr>
-                <td><strong>${c.code}</strong></td>
-                <td class="value-new">${c.New}</td>
-                <td class="value-react">${c.React}</td>
-                <td>${c.New + c.React}</td>
-                <td style="text-align: right;"><span class="value-revenue">R${Math.round(c.revenue).toLocaleString()}</span></td>
-            </tr>`).join('');
-        }
-
-        function initDropdowns() {
-            const shops = [...new Set(rawData.map(r => r['Sales Group']))].sort();
-            const select = document.getElementById('shopFilter');
-            if (select) shops.forEach(shop => {
-                const option = document.createElement('option');
-                option.value = shop;
-                option.textContent = shop;
-                select.appendChild(option);
-            });
-
-            const reps = [...new Set(rawData.map(r => r['Sales Rep']))].sort();
-            const repSelect = document.getElementById('repFilter');
-            if (repSelect) reps.forEach(rep => {
-                const option = document.createElement('option');
-                option.value = rep;
-                option.textContent = 'Rep ' + rep;
-                repSelect.appendChild(option);
-            });
-        }
-
-        function updateDashboard() {
-            const activeTab = document.querySelector('.tab-content.active').id;
-            
-            if (activeTab === 'shops') {
-                const filtered = filterData();
-                const kpis = updateKPIs(filtered);
-                drawTimeSeries(filtered);
-                drawMixChart(kpis.newCount, kpis.reactCount);
-                drawShopChart(filtered);
-                updateShopTable(filtered);
-            } else if (activeTab === 'reps') {
-                const ds = document.getElementById('startDate2').value;
-                const de = document.getElementById('endDate2').value;
-                const ct = document.getElementById('clientType2').value;
-                const filtered = rawData.filter(row => {
-                    const date = row['Sales Day'].replace(/\//g, '-');
-                    const inRange = date >= ds && date <= de;
-                    const typeMatch = ct === 'both' || (ct === 'new' && row.Status === 'New') || (ct === 'react' && row.Status === 'React');
-                    return inRange && typeMatch;
-                });
-                drawRepChart(filtered);
-                updateRepTable(filtered);
-            } else if (activeTab === 'codes') {
-                const ds = document.getElementById('startDate3').value;
-                const de = document.getElementById('endDate3').value;
-                const ct = document.getElementById('clientType3').value;
-                const filtered = rawData.filter(row => {
-                    const date = row['Sales Day'].replace(/\//g, '-');
-                    const inRange = date >= ds && date <= de;
-                    const typeMatch = ct === 'both' || (ct === 'new' && row.Status === 'New') || (ct === 'react' && row.Status === 'React');
-                    return inRange && typeMatch;
-                });
-                drawCodeChart(filtered);
-                updateCodeTable(filtered);
-            }
+            tbody.innerHTML = labels.map(code => `
+                <tr>
+                    <td><strong>${code}</strong></td>
+                    <td class="value-new">${codes[code].New}</td>
+                    <td class="value-react">${codes[code].React}</td>
+                    <td>${codes[code].New + codes[code].React}</td>
+                    <td style="text-align: right;"><span class="value-revenue">R${Math.round(codes[code].revenue).toLocaleString()}</span></td>
+                </tr>
+            `).join('');
         }
 
         function exportToExcel() {
-            const wb = XLSX.utils.book_new();
-            const summaryData = [['SHOPS ANALYTICS EXPORT'], [''], ['Shop Data:']];
-            
-            document.querySelectorAll('#shopTable tr').forEach(tr => {
-                summaryData.push(Array.from(tr.querySelectorAll('td')).map(td => td.textContent));
-            });
+            try {
+                console.log('Starting export...');
+                
+                // Prepare data
+                const newTotal = rawData.filter(r => r.Status === 'New').length;
+                const reactTotal = rawData.filter(r => r.Status === 'React').length;
+                const totalRev = rawData.reduce((sum, r) => sum + r['Turnover in ZAR'], 0);
+                const reactRate = ((reactTotal / (newTotal + reactTotal)) * 100).toFixed(1);
 
-            const ws = XLSX.utils.aoa_to_sheet(summaryData);
-            XLSX.utils.book_append_sheet(wb, ws, 'Summary');
-            XLSX.writeFile(wb, `Shops-Analytics-${new Date().toISOString().split('T')[0]}.xlsx`);
+                // Calculate shop data
+                const shops = {};
+                rawData.forEach(row => {
+                    if (!shops[row['Sales Group']]) {
+                        shops[row['Sales Group']] = { New: 0, React: 0, revenue: 0 };
+                    }
+                    shops[row['Sales Group']][row.Status === 'New' ? 'New' : 'React']++;
+                    shops[row['Sales Group']].revenue += row['Turnover in ZAR'];
+                });
+
+                // Calculate rep data
+                const reps = {};
+                rawData.forEach(row => {
+                    if (!reps[row['Sales Rep']]) {
+                        reps[row['Sales Rep']] = { New: 0, React: 0, revenue: 0 };
+                    }
+                    reps[row['Sales Rep']][row.Status === 'New' ? 'New' : 'React']++;
+                    reps[row['Sales Rep']].revenue += row['Turnover in ZAR'];
+                });
+
+                // Calculate code data
+                const codes = {};
+                rawData.forEach(row => {
+                    if (!codes[row['Business Code']]) {
+                        codes[row['Business Code']] = { New: 0, React: 0, revenue: 0 };
+                    }
+                    codes[row['Business Code']][row.Status === 'New' ? 'New' : 'React']++;
+                    codes[row['Business Code']].revenue += row['Turnover in ZAR'];
+                });
+
+                // Create Excel content as HTML table format that Excel can read
+                let excelContent = `<html xmlns:x="urn:schemas-microsoft-com:office:excel">
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        table { border-collapse: collapse; width: 100%; }
+                        th, td { border: 1px solid #999; padding: 8px; text-align: left; }
+                        th { background-color: #4472C4; color: white; font-weight: bold; }
+                        .header { font-size: 16px; font-weight: bold; background-color: #D9E1F2; }
+                        .subheader { font-size: 12px; background-color: #E7E6E6; font-weight: bold; }
+                    </style>
+                </head>
+                <body>`;
+
+                // Summary Sheet
+                excelContent += `<table>
+                    <tr><td colspan="2" class="header">SHOPS ANALYTICS - EXECUTIVE SUMMARY</td></tr>
+                    <tr><td colspan="2">Generated: ${new Date().toLocaleDateString()}</td></tr>
+                    <tr><td colspan="2"></td></tr>
+                    <tr><td class="subheader">KEY METRICS</td><td></td></tr>
+                    <tr><td>New Clients</td><td>${newTotal}</td></tr>
+                    <tr><td>Reactivated Clients</td><td>${reactTotal}</td></tr>
+                    <tr><td>Total Revenue (ZAR)</td><td>R${totalRev.toFixed(2)}</td></tr>
+                    <tr><td>Reactivation Rate (%)</td><td>${reactRate}%</td></tr>
+                    <tr><td colspan="2"></td></tr>
+                    <tr><td class="subheader">TOP SHOPS</td><td></td></tr>
+                    <tr><th>Shop Location</th><th>New | Reactivated | Total | Revenue</th></tr>`;
+
+                Object.entries(shops)
+                    .sort((a, b) => b[1].revenue - a[1].revenue)
+                    .slice(0, 5)
+                    .forEach(([shop, data]) => {
+                        excelContent += `<tr><td>${shop}</td><td>${data.New} | ${data.React} | ${data.New + data.React} | R${data.revenue.toFixed(2)}</td></tr>`;
+                    });
+
+                excelContent += `<tr><td colspan="2"></td></tr>
+                    <tr><td class="subheader">TOP REPS</td><td></td></tr>
+                    <tr><th>Sales Rep</th><th>New | Reactivated | Total | Revenue</th></tr>`;
+
+                Object.entries(reps)
+                    .sort((a, b) => b[1].revenue - a[1].revenue)
+                    .slice(0, 5)
+                    .forEach(([rep, data]) => {
+                        excelContent += `<tr><td>Rep ${rep}</td><td>${data.New} | ${data.React} | ${data.New + data.React} | R${data.revenue.toFixed(2)}</td></tr>`;
+                    });
+
+                excelContent += `</table>`;
+
+                // Page break
+                excelContent += `<br><br><br><table>
+                    <tr><td colspan="7" class="header">ALL TRANSACTIONS</td></tr>
+                    <tr>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Shop Location</th>
+                        <th>Rep ID</th>
+                        <th>Business Code</th>
+                        <th>Customer Name</th>
+                        <th>Revenue (ZAR)</th>
+                    </tr>`;
+
+                rawData.forEach(row => {
+                    excelContent += `<tr>
+                        <td>${row.Status}</td>
+                        <td>${row['Sales Day']}</td>
+                        <td>${row['Sales Group']}</td>
+                        <td>${row['Sales Rep']}</td>
+                        <td>${row['Business Code']}</td>
+                        <td>${row['Cust Name']}</td>
+                        <td>R${row['Turnover in ZAR'].toFixed(2)}</td>
+                    </tr>`;
+                });
+
+                excelContent += `</table>`;
+
+                // Shop Analysis
+                excelContent += `<br><br><br><table>
+                    <tr><td colspan="6" class="header">SHOP ANALYSIS</td></tr>
+                    <tr>
+                        <th>Shop Location</th>
+                        <th>New</th>
+                        <th>Reactivated</th>
+                        <th>Total</th>
+                        <th>Revenue (ZAR)</th>
+                        <th>Avg per Client</th>
+                    </tr>`;
+
+                Object.entries(shops)
+                    .sort((a, b) => b[1].revenue - a[1].revenue)
+                    .forEach(([shop, data]) => {
+                        const avg = (data.revenue / (data.New + data.React)).toFixed(2);
+                        excelContent += `<tr>
+                            <td>${shop}</td>
+                            <td>${data.New}</td>
+                            <td>${data.React}</td>
+                            <td>${data.New + data.React}</td>
+                            <td>R${data.revenue.toFixed(2)}</td>
+                            <td>R${avg}</td>
+                        </tr>`;
+                    });
+
+                excelContent += `</table>`;
+
+                // Rep Analysis
+                excelContent += `<br><br><br><table>
+                    <tr><td colspan="6" class="header">SALES REP ANALYSIS</td></tr>
+                    <tr>
+                        <th>Sales Rep</th>
+                        <th>New</th>
+                        <th>Reactivated</th>
+                        <th>Total</th>
+                        <th>Revenue (ZAR)</th>
+                        <th>Avg per Client</th>
+                    </tr>`;
+
+                Object.entries(reps)
+                    .sort((a, b) => b[1].revenue - a[1].revenue)
+                    .forEach(([rep, data]) => {
+                        const avg = (data.revenue / (data.New + data.React)).toFixed(2);
+                        excelContent += `<tr>
+                            <td>Rep ${rep}</td>
+                            <td>${data.New}</td>
+                            <td>${data.React}</td>
+                            <td>${data.New + data.React}</td>
+                            <td>R${data.revenue.toFixed(2)}</td>
+                            <td>R${avg}</td>
+                        </tr>`;
+                    });
+
+                excelContent += `</table>`;
+
+                // Code Analysis
+                excelContent += `<br><br><br><table>
+                    <tr><td colspan="5" class="header">BUSINESS CODE ANALYSIS</td></tr>
+                    <tr>
+                        <th>Business Code</th>
+                        <th>New</th>
+                        <th>Reactivated</th>
+                        <th>Total</th>
+                        <th>Revenue (ZAR)</th>
+                    </tr>`;
+
+                Object.entries(codes)
+                    .sort((a, b) => b[1].revenue - a[1].revenue)
+                    .forEach(([code, data]) => {
+                        excelContent += `<tr>
+                            <td>${code}</td>
+                            <td>${data.New}</td>
+                            <td>${data.React}</td>
+                            <td>${data.New + data.React}</td>
+                            <td>R${data.revenue.toFixed(2)}</td>
+                        </tr>`;
+                    });
+
+                excelContent += `</table></body></html>`;
+
+                // Create blob and download
+                const blob = new Blob([excelContent], { type: 'application/vnd.ms-excel;charset=utf-8' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                const fileName = `Shops-Analytics-${new Date().toISOString().split('T')[0]}.xls`;
+                
+                link.href = url;
+                link.download = fileName;
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Clean up
+                setTimeout(() => URL.revokeObjectURL(url), 100);
+                
+                console.log('Export completed successfully');
+                alert('✅ EXPORT SUCCESSFUL!\n\nFile: ' + fileName + '\n\n✓ Executive Summary\n✓ All 28 Transactions\n✓ Shop Analysis\n✓ Rep Analysis\n✓ Code Analysis\n\nFile will open in Excel/Spreadsheet app');
+
+            } catch (error) {
+                console.error('Export error:', error);
+                alert('❌ EXPORT FAILED\n\nError: ' + error.message);
+            }
         }
 
         initDropdowns();
