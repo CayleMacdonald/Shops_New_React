@@ -6,6 +6,7 @@
     <title>Shops Analytics Dashboard</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -17,10 +18,172 @@
             padding: 30px 0;
         }
         
-        .dashboard { 
-            padding: 30px 20px; 
-            max-width: 1900px; 
-            margin: 0 auto; 
+        /* LOGIN SCREEN STYLES */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .login-box {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 420px;
+            padding: 50px 40px;
+            position: relative;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 20px;
+        }
+        
+        .login-logo {
+            width: 110px;
+            height: auto;
+            display: block;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        
+        .login-header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .login-header p {
+            font-size: 14px;
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+        
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .form-group label {
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #2c3e50;
+        }
+        
+        .form-group input[type="email"],
+        .form-group input[type="password"] {
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            color: #2c3e50;
+            background: #f9fafb;
+        }
+        
+        .form-group input[type="email"]:focus,
+        .form-group input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+        
+        .checkbox-group label {
+            cursor: pointer;
+            margin: 0;
+            font-weight: 500;
+        }
+        
+        .login-btn {
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            margin-top: 8px;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .login-error {
+            padding: 12px 14px;
+            background: #fee;
+            border: 1px solid #fcc;
+            border-radius: 8px;
+            color: #c33;
+            font-size: 13px;
+            font-weight: 600;
+            display: none;
+            margin-bottom: 16px;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .login-error.show {
+            display: block;
+        }
+        
+        .dashboard {
+            display: none;
+            padding: 30px 20px;
+            max-width: 1900px;
+            margin: 0 auto;
+        }
+        
+        .dashboard.active {
+            display: block;
         }
         
         .header { 
@@ -29,17 +192,55 @@
             padding: 40px;
             border-radius: 12px;
             color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        .header h1 { 
+        .header-left h1 { 
             font-size: 42px; 
             margin-bottom: 8px; 
             font-weight: 800;
         }
         
-        .header p { 
+        .header-left p { 
             font-size: 16px; 
             opacity: 0.95;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-info {
+            text-align: right;
+            font-size: 14px;
+        }
+        
+        .user-info .email {
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+        
+        .logout-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
         }
         
         .tabs {
@@ -354,11 +555,57 @@
     </style>
 </head>
 <body>
-    <div class="dashboard">
+    <!-- LOGIN SCREEN -->
+    <div class="login-container" id="loginScreen">
+        <div class="login-box">
+            <div class="login-header">
+                <svg class="login-logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 170.1 36.4" style="enable-background:new 0 0 170.1 36.4;">
+                    <style type="text/css">
+                        .st0{fill:#CC0000;}
+                    </style>
+                    <path id="Wortmarke_pos" d="M118.5,30.4h7.3l-5.2-9c2.9-1.2,4.5-3.6,4.5-6.6c0-4.6-3-7.6-9-7.6h-11.5v23.2h6.3v-8.1h3.2L118.5,30.4  L118.5,30.4z M118.7,14.8c0,1.6-1.1,2.8-3.5,2.8h-4.4V12h4.4C117.6,12,118.7,13.2,118.7,14.8L118.7,14.8L118.7,14.8z M93.3,13.7v7.4  c0,3.4-1.6,4.5-3.8,4.5c-2.1,0-3.8-1.2-3.8-4.5v-7.5h-6.4v7.8c0,6.1,3.4,9.5,10.3,9.5c6.9,0,10.2-3.4,10.2-9.4v-7.8H93.3L93.3,13.7z   M85.7,11.6V7.2h-6.4v4.4H85.7L85.7,11.6z M93.3,11.6h6.4V7.2h-6.4V11.6L93.3,11.6z M52.7,22.6L49.4,7.2H43l5.9,23.2h6.8l4-15.2  l4,15.2h6.8l5.9-23.2H70l-3.3,15.4l-4-15.4h-6L52.7,22.6L52.7,22.6z M163.6,15.5h-7.8V7.2h-6.4v23.2h6.4v-9.7h7.8v9.7h6.5V7.2h-6.5  V15.5L163.6,15.5z M133.4,12.3v18.2h6.4V12.3h6V7.2h-18.4v5.1H133.4L133.4,12.3z"/>
+                    <path class="st0" d="M33.3,14.3H0V0h13.9v5.6h5.6V0h13.9V14.3L33.3,14.3z M19.4,30.9v5.6c8-1.5,13.9-8.4,13.9-16.2v-0.3H0v0.3  C0,28,5.9,34.9,13.9,36.4v-5.6H19.4L19.4,30.9z"/>
+                </svg>
+                <h1>🔐 Login</h1>
+                <p>Access your Shops Analytics Dashboard</p>
+            </div>
+            <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
+                <div class="login-error" id="loginError"></div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" required placeholder="you@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required placeholder="••••••••">
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="rememberMe">
+                    <label for="rememberMe">Remember Me</label>
+                </div>
+                
+                <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="dashboard" id="dashboardContainer">
         <!-- Header -->
         <div class="header">
-            <h1>📊 Shops Analytics Dashboard</h1>
-            <p>Real-time insights into client acquisition and reactivation performance</p>
+            <div class="header-left">
+                <h1>📊 Shops Analytics Dashboard</h1>
+                <p>Real-time insights into client acquisition and reactivation performance</p>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="email" id="userEmail"></div>
+                    <button class="logout-btn" onclick="handleLogout()">Logout</button>
+                </div>
+            </div>
         </div>
 
         <!-- Tabs -->
@@ -378,7 +625,7 @@
                     </div>
                     <div class="filter-group">
                         <label>📅 End Date</label>
-                        <input type="date" id="endDate1" value="2026-06-15" onchange="updateDashboard()">
+                        <input type="date" id="endDate1" value="2026-07-15" onchange="updateDashboard()">
                     </div>
                     <div class="filter-group">
                         <label>⏱️ Time Grouping</label>
@@ -448,18 +695,19 @@
 
             <div class="charts-grid">
                 <div class="table-card">
-                    <h3>⭐ Detailed Shop Performance</h3>
+                    <h3>📋 Shop Performance Details</h3>
                     <table>
                         <thead>
                             <tr>
                                 <th>Shop Location</th>
-                                <th>New</th>
+                                <th>New Clients</th>
                                 <th>Reactivated</th>
-                                <th>Total</th>
-                                <th style="text-align: right;">Revenue (ZAR)</th>
+                                <th>Total Clients</th>
+                                <th>Total Revenue (ZAR)</th>
                             </tr>
                         </thead>
-                        <tbody id="shopTable"></tbody>
+                        <tbody id="shopTable">
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -475,7 +723,7 @@
                     </div>
                     <div class="filter-group">
                         <label>📅 End Date</label>
-                        <input type="date" id="endDate2" value="2026-06-15" onchange="updateDashboard()">
+                        <input type="date" id="endDate2" value="2026-07-15" onchange="updateDashboard()">
                     </div>
                     <div class="filter-group">
                         <label>👥 Client Type</label>
@@ -503,18 +751,19 @@
 
             <div class="charts-grid">
                 <div class="table-card">
-                    <h3>⭐ Sales Representatives Performance</h3>
+                    <h3>📋 Sales Rep Details</h3>
                     <table>
                         <thead>
                             <tr>
-                                <th>Rep ID</th>
-                                <th>New</th>
+                                <th>Sales Rep</th>
+                                <th>New Clients</th>
                                 <th>Reactivated</th>
-                                <th>Total</th>
-                                <th style="text-align: right;">Revenue (ZAR)</th>
+                                <th>Total Clients</th>
+                                <th>Total Revenue (ZAR)</th>
                             </tr>
                         </thead>
-                        <tbody id="repTable"></tbody>
+                        <tbody id="repTable">
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -530,7 +779,7 @@
                     </div>
                     <div class="filter-group">
                         <label>📅 End Date</label>
-                        <input type="date" id="endDate3" value="2026-06-15" onchange="updateDashboard()">
+                        <input type="date" id="endDate3" value="2026-07-15" onchange="updateDashboard()">
                     </div>
                     <div class="filter-group">
                         <label>👥 Client Type</label>
@@ -558,28 +807,124 @@
 
             <div class="charts-grid">
                 <div class="table-card">
-                    <h3>⭐ Business Code Performance</h3>
+                    <h3>📋 Business Code Details</h3>
                     <table>
                         <thead>
                             <tr>
                                 <th>Business Code</th>
-                                <th>New</th>
+                                <th>New Clients</th>
                                 <th>Reactivated</th>
-                                <th>Total</th>
-                                <th style="text-align: right;">Revenue (ZAR)</th>
+                                <th>Total Clients</th>
+                                <th>Total Revenue (ZAR)</th>
                             </tr>
                         </thead>
-                        <tbody id="codeTable"></tbody>
+                        <tbody id="codeTable">
+                        </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- Export button -->
-        <button class="export-btn" onclick="exportToExcel()">📊 Export to Excel</button>
+        <!-- Export Button -->
+        <div class="charts-grid">
+            <button class="export-btn" onclick="exportToExcel()">📥 Export Report</button>
+        </div>
     </div>
 
     <script>
+        // ============================================
+        // SUPABASE INITIALIZATION
+        // ============================================
+        const SUPABASE_URL = 'https://cwmigqhaegaryatrcdee.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_dykPG8rdps9iWDJYefM1Ig_QClCJUf0';
+
+        window.supabaseClient = window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY
+        );
+
+        // ============================================
+        // AUTHENTICATION HANDLERS
+        // ============================================
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            const loginBtn = document.getElementById('loginBtn');
+            const loginError = document.getElementById('loginError');
+            
+            loginBtn.disabled = true;
+            loginError.classList.remove('show');
+            
+            try {
+                const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+                    email,
+                    password
+                });
+                
+                if (error) throw new Error(error.message);
+                
+                // Handle Remember Me
+                if (rememberMe) {
+                    localStorage.setItem('rememberedEmail', email);
+                } else {
+                    localStorage.removeItem('rememberedEmail');
+                }
+                
+                // Show dashboard
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('dashboardContainer').classList.add('active');
+                document.getElementById('userEmail').textContent = email;
+                
+                // Initialize dashboard
+                initDropdowns();
+                updateDashboard();
+                
+            } catch (err) {
+                loginError.textContent = '❌ ' + (err.message || 'Login failed. Please check your credentials.');
+                loginError.classList.add('show');
+                loginBtn.disabled = false;
+            }
+        }
+
+        async function handleLogout() {
+            try {
+                await window.supabaseClient.auth.signOut();
+                
+                // Reset login form
+                document.getElementById('loginForm').reset();
+                document.getElementById('loginError').classList.remove('show');
+                
+                // Show login screen
+                document.getElementById('loginScreen').style.display = 'flex';
+                document.getElementById('dashboardContainer').classList.remove('active');
+                
+                // Prefill email if Remember Me was used
+                const rememberedEmail = localStorage.getItem('rememberedEmail');
+                if (rememberedEmail) {
+                    document.getElementById('email').value = rememberedEmail;
+                }
+                
+            } catch (err) {
+                console.error('Logout error:', err);
+                alert('Error logging out. Please refresh the page.');
+            }
+        }
+
+        // Check for remembered email on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const rememberedEmail = localStorage.getItem('rememberedEmail');
+            if (rememberedEmail) {
+                document.getElementById('email').value = rememberedEmail;
+            }
+        });
+
+        // ============================================
+        // DASHBOARD FUNCTIONALITY (UNCHANGED)
+        // ============================================
+        
         const rawData = [
             { Status: 'New', 'Sales Day': '2026/06/10', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 2273, 'Business Code': 'I001', 'Cust Name': 'Dom Wiid Electrical', 'Turnover in ZAR': 1465.06 },
             { Status: 'New', 'Sales Day': '2026/06/09', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 2273, 'Business Code': 'S002', 'Cust Name': 'Khalsiya Meat Corporation (Pty) ltd', 'Turnover in ZAR': 2081.33 },
@@ -642,6 +987,22 @@
         let repChartInstance = null;
         let codeChartInstance = null;
 
+        function initDropdowns() {
+            const shops = [...new Set(rawData.map(row => row['Sales Group']))].sort();
+            const filters = ['shopFilter1', 'shopFilter2', 'shopFilter3'];
+            
+            filters.forEach(filterId => {
+                const select = document.getElementById(filterId);
+                select.innerHTML = '<option value="">All Shop Locations</option>';
+                shops.forEach(shop => {
+                    const option = document.createElement('option');
+                    option.value = shop;
+                    option.textContent = shop;
+                    select.appendChild(option);
+                });
+            });
+        }
+
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -650,30 +1011,12 @@
             updateDashboard();
         }
 
-        function getShops() {
-            return [...new Set(rawData.map(r => r['Sales Group']))].sort();
-        }
-
-        function initDropdowns() {
-            const shops = getShops();
-            [1, 2, 3].forEach(i => {
-                const select = document.getElementById('shopFilter' + i);
-                select.innerHTML = '<option value="">All Shop Locations</option>';
-                shops.forEach(shop => {
-                    const opt = document.createElement('option');
-                    opt.value = shop;
-                    opt.textContent = shop;
-                    select.appendChild(opt);
-                });
-            });
-        }
-
         function filterData(tabNum) {
             const startDate = document.getElementById('startDate' + tabNum).value;
             const endDate = document.getElementById('endDate' + tabNum).value;
             const clientType = document.getElementById('clientType' + tabNum).value;
             const shopFilter = document.getElementById('shopFilter' + tabNum).value;
-
+            
             return rawData.filter(row => {
                 const date = row['Sales Day'].replace(/\//g, '-');
                 const inRange = date >= startDate && date <= endDate;
@@ -685,246 +1028,329 @@
 
         function updateDashboard() {
             const activeTab = document.querySelector('.tab-content.active').id;
-
-            if (activeTab === 'shops') {
-                const data = filterData(1);
-                updateShopsTab(data);
-            } else if (activeTab === 'reps') {
-                const data = filterData(2);
-                updateRepsTab(data);
-            } else if (activeTab === 'codes') {
-                const data = filterData(3);
-                updateCodesTab(data);
-            }
+            
+            if (activeTab === 'shops') updateShopsTab();
+            else if (activeTab === 'reps') updateRepsTab();
+            else if (activeTab === 'codes') updateCodesTab();
         }
 
-        function updateShopsTab(data) {
-            const newCount = data.filter(r => r.Status === 'New').length;
-            const reactCount = data.filter(r => r.Status === 'React').length;
-            const totalRevenue = data.reduce((sum, r) => sum + r['Turnover in ZAR'], 0);
-            const total = newCount + reactCount;
-            const rate = total > 0 ? ((reactCount / total) * 100).toFixed(1) : 0;
+        function updateShopsTab() {
+            const filtered = filterData(1);
+            
+            const newTotal = filtered.filter(r => r.Status === 'New').length;
+            const reactTotal = filtered.filter(r => r.Status === 'React').length;
+            const totalRev = filtered.reduce((sum, r) => sum + r['Turnover in ZAR'], 0);
+            const reactRate = totalRev === 0 ? 0 : ((reactTotal / (newTotal + reactTotal)) * 100).toFixed(1);
 
-            document.getElementById('newCount1').textContent = newCount;
-            document.getElementById('reactCount1').textContent = reactCount;
-            document.getElementById('totalRevenue1').textContent = 'R' + Math.round(totalRevenue).toLocaleString();
-            document.getElementById('reactivationRate1').textContent = rate + '%';
+            document.getElementById('newCount1').textContent = newTotal;
+            document.getElementById('reactCount1').textContent = reactTotal;
+            document.getElementById('totalRevenue1').textContent = 'R' + totalRev.toLocaleString('en-ZA', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('reactivationRate1').textContent = reactRate + '%';
 
-            drawTimeSeries(data);
-            drawMixChart(newCount, reactCount);
-            drawShopChart(data);
-            updateShopTable(data);
+            updateTimeSeriesChart(filtered);
+            updateMixCircles(filtered);
+            updateShopChart(filtered);
+            updateShopTable(filtered);
         }
 
-        function drawTimeSeries(data) {
-            const groups = {};
+        function updateRepsTab() {
+            const filtered = filterData(2);
+            updateRepChart(filtered);
+            updateRepTable(filtered);
+        }
+
+        function updateCodesTab() {
+            const filtered = filterData(3);
+            updateCodeChart(filtered);
+            updateCodeTable(filtered);
+        }
+
+        function updateTimeSeriesChart(data) {
+            const grouping = document.getElementById('grouping1').value;
+            const grouped = {};
+
             data.forEach(row => {
-                const key = row['Sales Day'];
-                if (!groups[key]) groups[key] = { date: key, 'New': 0, 'React': 0 };
-                groups[key][row.Status]++;
+                const date = new Date(row['Sales Day'].replace(/\//g, '-'));
+                let key;
+                
+                if (grouping === 'daily') {
+                    key = date.toISOString().split('T')[0];
+                } else if (grouping === 'weekly') {
+                    const weekStart = new Date(date);
+                    weekStart.setDate(date.getDate() - date.getDay());
+                    key = 'Week of ' + weekStart.toISOString().split('T')[0];
+                } else {
+                    key = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0');
+                }
+
+                if (!grouped[key]) grouped[key] = { New: 0, React: 0 };
+                grouped[key][row.Status === 'New' ? 'New' : 'React']++;
             });
 
-            const series = Object.values(groups).sort((a, b) => new Date(a.date) - new Date(b.date));
-            const ctx = document.getElementById('timeSeriesChart');
-            if (!ctx) return;
+            const sorted = Object.entries(grouped).sort((a, b) => a[0].localeCompare(b[0]));
+            const labels = sorted.map(e => e[0]);
+            const newData = sorted.map(e => e[1].New);
+            const reactData = sorted.map(e => e[1].React);
 
+            const ctx = document.getElementById('timeSeriesChart').getContext('2d');
             if (timeSeriesChartInstance) timeSeriesChartInstance.destroy();
-
-            timeSeriesChartInstance = new Chart(ctx.getContext('2d'), {
+            
+            timeSeriesChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: series.map(d => d.date),
+                    labels: labels,
                     datasets: [
-                        { label: 'New', data: series.map(d => d.New), borderColor: '#3498db', backgroundColor: 'rgba(52, 152, 219, 0.1)', borderWidth: 2.5, fill: true, tension: 0.4, pointRadius: 5, pointBackgroundColor: '#3498db' },
-                        { label: 'Reactivated', data: series.map(d => d.React), borderColor: '#e74c3c', backgroundColor: 'rgba(231, 76, 60, 0.1)', borderWidth: 2.5, fill: true, tension: 0.4, pointRadius: 5, pointBackgroundColor: '#e74c3c' }
+                        {
+                            label: 'New Clients',
+                            data: newData,
+                            borderColor: '#3498db',
+                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 6,
+                            pointBackgroundColor: '#3498db',
+                        },
+                        {
+                            label: 'Reactivated',
+                            data: reactData,
+                            borderColor: '#e74c3c',
+                            backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 6,
+                            pointBackgroundColor: '#e74c3c',
+                        }
                     ]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { usePointStyle: true, padding: 15, font: { size: 12 }, color: '#2c3e50' } } }, scales: { y: { grid: { color: 'rgba(0, 0, 0, 0.05)' } }, x: { grid: { color: 'rgba(0, 0, 0, 0.05)' } } } }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } },
+                    scales: { y: { beginAtZero: true } }
+                }
             });
         }
 
-        function drawMixChart(newCount, reactCount) {
+        function updateMixCircles(data) {
+            const newCount = data.filter(r => r.Status === 'New').length;
+            const reactCount = data.filter(r => r.Status === 'React').length;
             const total = newCount + reactCount;
-            const newPercent = total > 0 ? ((newCount / total) * 100).toFixed(0) : 0;
-            const reactPercent = total > 0 ? ((reactCount / total) * 100).toFixed(0) : 0;
 
-            const container = document.getElementById('mixContainer');
-            if (!container) return;
-            container.innerHTML = `
+            const newPct = total === 0 ? 0 : ((newCount / total) * 100).toFixed(1);
+            const reactPct = total === 0 ? 0 : ((reactCount / total) * 100).toFixed(1);
+
+            document.getElementById('mixContainer').innerHTML = `
                 <div class="mix-item">
-                    <div class="mix-circle new"><div>${newCount}</div></div>
-                    <div class="mix-label">New Clients</div>
-                    <div style="font-size: 12px; color: #7f8c8d;">${newPercent}%</div>
+                    <div class="mix-circle new">${newCount}</div>
+                    <div class="mix-label">New (${newPct}%)</div>
                 </div>
-                <div style="font-size: 24px; color: #bdc3c7;">vs</div>
                 <div class="mix-item">
-                    <div class="mix-circle react"><div>${reactCount}</div></div>
-                    <div class="mix-label">Reactivated</div>
-                    <div style="font-size: 12px; color: #7f8c8d;">${reactPercent}%</div>
+                    <div class="mix-circle react">${reactCount}</div>
+                    <div class="mix-label">Reactivated (${reactPct}%)</div>
                 </div>
             `;
         }
 
-        function drawShopChart(data) {
+        function updateShopChart(data) {
             const shops = {};
             data.forEach(row => {
-                if (!shops[row['Sales Group']]) shops[row['Sales Group']] = { 'New': 0, 'React': 0 };
-                shops[row['Sales Group']][row.Status]++;
+                if (!shops[row['Sales Group']]) shops[row['Sales Group']] = { New: 0, React: 0 };
+                shops[row['Sales Group']][row.Status === 'New' ? 'New' : 'React']++;
             });
 
-            const labels = Object.keys(shops);
-            const ctx = document.getElementById('shopChart');
-            if (!ctx) return;
+            const sorted = Object.entries(shops).sort((a, b) => (a[1].New + a[1].React) - (b[1].New + b[1].React));
+            const labels = sorted.map(e => e[0]);
+            const newData = sorted.map(e => e[1].New);
+            const reactData = sorted.map(e => e[1].React);
+
+            const ctx = document.getElementById('shopChart').getContext('2d');
             if (shopChartInstance) shopChartInstance.destroy();
 
-            shopChartInstance = new Chart(ctx.getContext('2d'), {
+            shopChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'New', data: labels.map(l => shops[l].New), backgroundColor: '#3498db' },
-                        { label: 'Reactivated', data: labels.map(l => shops[l].React), backgroundColor: '#e74c3c' }
+                        { label: 'New', data: newData, backgroundColor: '#3498db' },
+                        { label: 'Reactivated', data: reactData, backgroundColor: '#e74c3c' }
                     ]
                 },
-                options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', scales: { x: { stacked: true }, y: { stacked: true } } }
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } },
+                    scales: { x: { stacked: true }, y: { stacked: true } }
+                }
+            });
+        }
+
+        function updateRepChart(data) {
+            const reps = {};
+            data.forEach(row => {
+                if (!reps[row['Sales Rep']]) reps[row['Sales Rep']] = { New: 0, React: 0 };
+                reps[row['Sales Rep']][row.Status === 'New' ? 'New' : 'React']++;
+            });
+
+            const sorted = Object.entries(reps).sort((a, b) => (b[1].New + b[1].React) - (a[1].New + a[1].React)).slice(0, 10);
+            const labels = sorted.map(e => 'Rep ' + e[0]);
+            const newData = sorted.map(e => e[1].New);
+            const reactData = sorted.map(e => e[1].React);
+
+            const ctx = document.getElementById('repChart').getContext('2d');
+            if (repChartInstance) repChartInstance.destroy();
+
+            repChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'New', data: newData, backgroundColor: '#3498db' },
+                        { label: 'Reactivated', data: reactData, backgroundColor: '#e74c3c' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        function updateCodeChart(data) {
+            const codes = {};
+            data.forEach(row => {
+                if (!codes[row['Business Code']]) codes[row['Business Code']] = { New: 0, React: 0, revenue: 0 };
+                codes[row['Business Code']][row.Status === 'New' ? 'New' : 'React']++;
+                codes[row['Business Code']].revenue += row['Turnover in ZAR'];
+            });
+
+            const sorted = Object.entries(codes).sort((a, b) => b[1].revenue - a[1].revenue).slice(0, 10);
+            const labels = sorted.map(e => e[0]);
+            const newData = sorted.map(e => e[1].New);
+            const reactData = sorted.map(e => e[1].React);
+
+            const ctx = document.getElementById('codeChart').getContext('2d');
+            if (codeChartInstance) codeChartInstance.destroy();
+
+            codeChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'New', data: newData, backgroundColor: '#3498db' },
+                        { label: 'Reactivated', data: reactData, backgroundColor: '#e74c3c' }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } },
+                    scales: { x: { stacked: true }, y: { stacked: true } }
+                }
             });
         }
 
         function updateShopTable(data) {
             const shops = {};
             data.forEach(row => {
-                if (!shops[row['Sales Group']]) shops[row['Sales Group']] = { 'New': 0, 'React': 0, revenue: 0 };
-                shops[row['Sales Group']][row.Status]++;
+                if (!shops[row['Sales Group']]) shops[row['Sales Group']] = { New: 0, React: 0, revenue: 0 };
+                shops[row['Sales Group']][row.Status === 'New' ? 'New' : 'React']++;
                 shops[row['Sales Group']].revenue += row['Turnover in ZAR'];
             });
 
-            const tbody = document.getElementById('shopTable');
-            tbody.innerHTML = Object.entries(shops).sort((a, b) => b[1].revenue - a[1].revenue).map(([shop, data]) => `
-                <tr>
-                    <td><strong>${shop}</strong></td>
+            let html = '';
+            Object.entries(shops).sort((a, b) => b[1].revenue - a[1].revenue).forEach(([shop, data]) => {
+                const total = data.New + data.React;
+                html += `<tr>
+                    <td>${shop}</td>
                     <td class="value-new">${data.New}</td>
                     <td class="value-react">${data.React}</td>
-                    <td>${data.New + data.React}</td>
-                    <td style="text-align: right;"><span class="value-revenue">R${Math.round(data.revenue).toLocaleString()}</span></td>
-                </tr>
-            `).join('');
+                    <td>${total}</td>
+                    <td class="value-revenue">R${data.revenue.toFixed(2)}</td>
+                </tr>`;
+            });
+
+            document.getElementById('shopTable').innerHTML = html;
         }
 
-        function updateRepsTab(data) {
+        function updateRepTable(data) {
             const reps = {};
             data.forEach(row => {
-                if (!reps[row['Sales Rep']]) reps[row['Sales Rep']] = { 'New': 0, 'React': 0, revenue: 0 };
-                reps[row['Sales Rep']][row.Status]++;
+                if (!reps[row['Sales Rep']]) reps[row['Sales Rep']] = { New: 0, React: 0, revenue: 0 };
+                reps[row['Sales Rep']][row.Status === 'New' ? 'New' : 'React']++;
                 reps[row['Sales Rep']].revenue += row['Turnover in ZAR'];
             });
 
-            const ctx = document.getElementById('repChart');
-            if (!ctx) return;
-            if (repChartInstance) repChartInstance.destroy();
-
-            const labels = Object.keys(reps);
-            repChartInstance = new Chart(ctx.getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: labels.map(l => 'Rep ' + l),
-                    datasets: [
-                        { label: 'New', data: labels.map(l => reps[l].New), backgroundColor: '#3498db' },
-                        { label: 'Reactivated', data: labels.map(l => reps[l].React), backgroundColor: '#e74c3c' }
-                    ]
-                },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { grid: { color: 'rgba(0, 0, 0, 0.05)' } } } }
+            let html = '';
+            Object.entries(reps).sort((a, b) => b[1].revenue - a[1].revenue).forEach(([rep, data]) => {
+                const total = data.New + data.React;
+                html += `<tr>
+                    <td>Rep ${rep}</td>
+                    <td class="value-new">${data.New}</td>
+                    <td class="value-react">${data.React}</td>
+                    <td>${total}</td>
+                    <td class="value-revenue">R${data.revenue.toFixed(2)}</td>
+                </tr>`;
             });
 
-            const tbody = document.getElementById('repTable');
-            tbody.innerHTML = labels.map(rep => `
-                <tr>
-                    <td><strong>Rep ${rep}</strong></td>
-                    <td class="value-new">${reps[rep].New}</td>
-                    <td class="value-react">${reps[rep].React}</td>
-                    <td>${reps[rep].New + reps[rep].React}</td>
-                    <td style="text-align: right;"><span class="value-revenue">R${Math.round(reps[rep].revenue).toLocaleString()}</span></td>
-                </tr>
-            `).join('');
+            document.getElementById('repTable').innerHTML = html;
         }
 
-        function updateCodesTab(data) {
+        function updateCodeTable(data) {
             const codes = {};
             data.forEach(row => {
-                if (!codes[row['Business Code']]) codes[row['Business Code']] = { 'New': 0, 'React': 0, revenue: 0 };
-                codes[row['Business Code']][row.Status]++;
+                if (!codes[row['Business Code']]) codes[row['Business Code']] = { New: 0, React: 0, revenue: 0 };
+                codes[row['Business Code']][row.Status === 'New' ? 'New' : 'React']++;
                 codes[row['Business Code']].revenue += row['Turnover in ZAR'];
             });
 
-            const ctx = document.getElementById('codeChart');
-            if (!ctx) return;
-            if (codeChartInstance) codeChartInstance.destroy();
-
-            const labels = Object.keys(codes).sort((a, b) => codes[b].revenue - codes[a].revenue);
-            codeChartInstance = new Chart(ctx.getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        { label: 'New', data: labels.map(l => codes[l].New), backgroundColor: '#3498db' },
-                        { label: 'Reactivated', data: labels.map(l => codes[l].React), backgroundColor: '#e74c3c' }
-                    ]
-                },
-                options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', scales: { x: { stacked: true }, y: { stacked: true } } }
+            let html = '';
+            Object.entries(codes).sort((a, b) => b[1].revenue - a[1].revenue).forEach(([code, data]) => {
+                const total = data.New + data.React;
+                html += `<tr>
+                    <td>${code}</td>
+                    <td class="value-new">${data.New}</td>
+                    <td class="value-react">${data.React}</td>
+                    <td>${total}</td>
+                    <td class="value-revenue">R${data.revenue.toFixed(2)}</td>
+                </tr>`;
             });
 
-            const tbody = document.getElementById('codeTable');
-            tbody.innerHTML = labels.map(code => `
-                <tr>
-                    <td><strong>${code}</strong></td>
-                    <td class="value-new">${codes[code].New}</td>
-                    <td class="value-react">${codes[code].React}</td>
-                    <td>${codes[code].New + codes[code].React}</td>
-                    <td style="text-align: right;"><span class="value-revenue">R${Math.round(codes[code].revenue).toLocaleString()}</span></td>
-                </tr>
-            `).join('');
+            document.getElementById('codeTable').innerHTML = html;
         }
 
         function exportToExcel() {
             try {
-                console.log('Starting export...');
+                const filtered = filterData(1);
                 
-                // Prepare data
-                const newTotal = rawData.filter(r => r.Status === 'New').length;
-                const reactTotal = rawData.filter(r => r.Status === 'React').length;
-                const totalRev = rawData.reduce((sum, r) => sum + r['Turnover in ZAR'], 0);
-                const reactRate = ((reactTotal / (newTotal + reactTotal)) * 100).toFixed(1);
+                const newTotal = filtered.filter(r => r.Status === 'New').length;
+                const reactTotal = filtered.filter(r => r.Status === 'React').length;
+                const totalRev = filtered.reduce((sum, r) => sum + r['Turnover in ZAR'], 0);
+                const reactRate = totalRev === 0 ? 0 : ((reactTotal / (newTotal + reactTotal)) * 100).toFixed(1);
 
-                // Calculate shop data
                 const shops = {};
-                rawData.forEach(row => {
-                    if (!shops[row['Sales Group']]) {
-                        shops[row['Sales Group']] = { New: 0, React: 0, revenue: 0 };
-                    }
+                const reps = {};
+                const codes = {};
+                
+                filtered.forEach(row => {
+                    if (!shops[row['Sales Group']]) shops[row['Sales Group']] = { New: 0, React: 0, revenue: 0 };
                     shops[row['Sales Group']][row.Status === 'New' ? 'New' : 'React']++;
                     shops[row['Sales Group']].revenue += row['Turnover in ZAR'];
-                });
 
-                // Calculate rep data
-                const reps = {};
-                rawData.forEach(row => {
-                    if (!reps[row['Sales Rep']]) {
-                        reps[row['Sales Rep']] = { New: 0, React: 0, revenue: 0 };
-                    }
+                    if (!reps[row['Sales Rep']]) reps[row['Sales Rep']] = { New: 0, React: 0, revenue: 0 };
                     reps[row['Sales Rep']][row.Status === 'New' ? 'New' : 'React']++;
                     reps[row['Sales Rep']].revenue += row['Turnover in ZAR'];
-                });
 
-                // Calculate code data
-                const codes = {};
-                rawData.forEach(row => {
-                    if (!codes[row['Business Code']]) {
-                        codes[row['Business Code']] = { New: 0, React: 0, revenue: 0 };
-                    }
+                    if (!codes[row['Business Code']]) codes[row['Business Code']] = { New: 0, React: 0, revenue: 0 };
                     codes[row['Business Code']][row.Status === 'New' ? 'New' : 'React']++;
                     codes[row['Business Code']].revenue += row['Turnover in ZAR'];
                 });
 
-                // Create Excel content as HTML table format that Excel can read
                 let excelContent = `<html xmlns:x="urn:schemas-microsoft-com:office:excel">
                 <head>
                     <meta charset="UTF-8">
@@ -938,7 +1364,6 @@
                 </head>
                 <body>`;
 
-                // Summary Sheet
                 excelContent += `<table>
                     <tr><td colspan="2" class="header">SHOPS ANALYTICS - EXECUTIVE SUMMARY</td></tr>
                     <tr><td colspan="2">Generated: ${new Date().toLocaleDateString()}</td></tr>
@@ -972,7 +1397,6 @@
 
                 excelContent += `</table>`;
 
-                // Page break
                 excelContent += `<br><br><br><table>
                     <tr><td colspan="7" class="header">ALL TRANSACTIONS</td></tr>
                     <tr>
@@ -985,7 +1409,7 @@
                         <th>Revenue (ZAR)</th>
                     </tr>`;
 
-                rawData.forEach(row => {
+                filtered.forEach(row => {
                     excelContent += `<tr>
                         <td>${row.Status}</td>
                         <td>${row['Sales Day']}</td>
@@ -999,7 +1423,6 @@
 
                 excelContent += `</table>`;
 
-                // Shop Analysis
                 excelContent += `<br><br><br><table>
                     <tr><td colspan="6" class="header">SHOP ANALYSIS</td></tr>
                     <tr>
@@ -1025,62 +1448,8 @@
                         </tr>`;
                     });
 
-                excelContent += `</table>`;
-
-                // Rep Analysis
-                excelContent += `<br><br><br><table>
-                    <tr><td colspan="6" class="header">SALES REP ANALYSIS</td></tr>
-                    <tr>
-                        <th>Sales Rep</th>
-                        <th>New</th>
-                        <th>Reactivated</th>
-                        <th>Total</th>
-                        <th>Revenue (ZAR)</th>
-                        <th>Avg per Client</th>
-                    </tr>`;
-
-                Object.entries(reps)
-                    .sort((a, b) => b[1].revenue - a[1].revenue)
-                    .forEach(([rep, data]) => {
-                        const avg = (data.revenue / (data.New + data.React)).toFixed(2);
-                        excelContent += `<tr>
-                            <td>Rep ${rep}</td>
-                            <td>${data.New}</td>
-                            <td>${data.React}</td>
-                            <td>${data.New + data.React}</td>
-                            <td>R${data.revenue.toFixed(2)}</td>
-                            <td>R${avg}</td>
-                        </tr>`;
-                    });
-
-                excelContent += `</table>`;
-
-                // Code Analysis
-                excelContent += `<br><br><br><table>
-                    <tr><td colspan="5" class="header">BUSINESS CODE ANALYSIS</td></tr>
-                    <tr>
-                        <th>Business Code</th>
-                        <th>New</th>
-                        <th>Reactivated</th>
-                        <th>Total</th>
-                        <th>Revenue (ZAR)</th>
-                    </tr>`;
-
-                Object.entries(codes)
-                    .sort((a, b) => b[1].revenue - a[1].revenue)
-                    .forEach(([code, data]) => {
-                        excelContent += `<tr>
-                            <td>${code}</td>
-                            <td>${data.New}</td>
-                            <td>${data.React}</td>
-                            <td>${data.New + data.React}</td>
-                            <td>R${data.revenue.toFixed(2)}</td>
-                        </tr>`;
-                    });
-
                 excelContent += `</table></body></html>`;
 
-                // Create blob and download
                 const blob = new Blob([excelContent], { type: 'application/vnd.ms-excel;charset=utf-8' });
                 const link = document.createElement('a');
                 const url = URL.createObjectURL(blob);
@@ -1093,20 +1462,15 @@
                 link.click();
                 document.body.removeChild(link);
                 
-                // Clean up
                 setTimeout(() => URL.revokeObjectURL(url), 100);
                 
-                console.log('Export completed successfully');
-                alert('✅ EXPORT SUCCESSFUL!\n\nFile: ' + fileName + '\n\n✓ Executive Summary\n✓ All 28 Transactions\n✓ Shop Analysis\n✓ Rep Analysis\n✓ Code Analysis\n\nFile will open in Excel/Spreadsheet app');
+                alert('✅ EXPORT SUCCESSFUL!\n\nFile: ' + fileName);
 
             } catch (error) {
                 console.error('Export error:', error);
                 alert('❌ EXPORT FAILED\n\nError: ' + error.message);
             }
         }
-
-        initDropdowns();
-        updateDashboard();
     </script>
 </body>
 </html>
