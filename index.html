@@ -3,47 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shops Analytics Dashboard</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
+    <title>Analytics Dashboard</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f0f2f5;
-            color: #1a202c;
-            min-height: 100vh;
-            padding: 30px 0;
+            color: #2c3e50;
+            line-height: 1.6;
         }
-        
-        /* LOGIN SCREEN STYLES */
-        .login-container {
+
+        .auth-container {
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
         }
-        
+
         .login-box {
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
             width: 100%;
-            max-width: 420px;
-            padding: 50px 40px;
+            max-width: 380px;
             position: relative;
         }
-        
-        .login-header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-top: 20px;
-        }
-        
+
         .login-logo {
             width: 110px;
             height: auto;
@@ -52,879 +47,748 @@
             top: 20px;
             left: 20px;
         }
-        
-        .login-header h1 {
-            font-size: 32px;
+
+        .login-title {
+            text-align: center;
+            margin-top: 40px;
+            margin-bottom: 30px;
+            font-size: 24px;
             font-weight: 800;
             color: #2c3e50;
-            margin-bottom: 8px;
         }
-        
-        .login-header p {
-            font-size: 14px;
-            color: #7f8c8d;
-            line-height: 1.6;
-        }
-        
-        .login-form {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        
+
         .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+            margin-bottom: 18px;
         }
-        
+
         .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
             font-size: 13px;
-            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #2c3e50;
+            color: #34495e;
         }
-        
-        .form-group input[type="email"],
-        .form-group input[type="password"] {
-            padding: 14px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
             font-size: 14px;
             transition: all 0.3s ease;
-            color: #2c3e50;
-            background: #f9fafb;
         }
-        
-        .form-group input[type="email"]:focus,
-        .form-group input[type="password"]:focus {
+
+        .form-group input:focus {
             outline: none;
             border-color: #667eea;
-            background: white;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
-        
-        .checkbox-group {
+
+        .remember-me {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 13px;
         }
-        
-        .checkbox-group input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+
+        .remember-me input {
+            margin-right: 8px;
             cursor: pointer;
-            accent-color: #667eea;
         }
-        
-        .checkbox-group label {
-            cursor: pointer;
-            margin: 0;
-            font-weight: 500;
-        }
-        
+
         .login-btn {
-            padding: 14px 24px;
+            width: 100%;
+            padding: 12px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 14px;
+            border-radius: 6px;
             font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        
+
         .login-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
         }
-        
-        .login-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .login-error {
-            padding: 12px 14px;
-            background: #fee;
-            border: 1px solid #fcc;
-            border-radius: 8px;
-            color: #c33;
-            font-size: 13px;
-            font-weight: 600;
+
+        .error-msg {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 8px;
+            text-align: center;
             display: none;
-            margin-bottom: 16px;
-            animation: slideDown 0.3s ease;
         }
-        
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        .dashboard-container {
+            display: none;
+            min-height: 100vh;
+            background: #f0f2f5;
+            padding: 0;
         }
-        
-        .login-error.show {
+
+        .dashboard-container.active {
             display: block;
         }
-        
-        .dashboard {
-            display: none;
-            padding: 30px 20px;
-            max-width: 1900px;
-            margin: 0 auto;
-        }
-        
-        .dashboard.active {
-            display: block;
-        }
-        
-        .header { 
-            margin-bottom: 40px;
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            padding: 40px;
-            border-radius: 12px;
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
             color: white;
+            padding: 24px 32px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
-        
-        .header-left h1 { 
-            font-size: 42px; 
-            margin-bottom: 8px; 
-            font-weight: 800;
-        }
-        
-        .header-left p { 
-            font-size: 16px; 
-            opacity: 0.95;
-        }
-        
-        .header-right {
+
+        .header-left {
             display: flex;
             align-items: center;
             gap: 20px;
         }
-        
-        .user-info {
-            text-align: right;
-            font-size: 14px;
+
+        .header-logo {
+            width: 80px;
+            height: auto;
         }
-        
-        .user-info .email {
-            opacity: 0.9;
-            margin-bottom: 4px;
+
+        .header-title {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
         }
-        
-        .logout-btn {
+
+        .header-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .home-btn {
             padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
             color: white;
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 6px;
-            font-size: 13px;
-            font-weight: 700;
             cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
             transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
+            letter-spacing: 0.5px;
         }
-        
-        .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
+
+        .home-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
             border-color: rgba(255, 255, 255, 0.5);
         }
-        
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-        
-        .tab-btn {
-            padding: 12px 24px;
-            background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: #2c3e50;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-        }
-        
-        .tab-btn:hover {
-            border-color: #34495e;
-            background: #f9fafb;
-        }
-        
-        .tab-btn.active {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+
+        .logout-btn {
+            padding: 10px 20px;
+            background: #e74c3c;
             color: white;
-            border-color: #34495e;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        
-        .tab-content {
+
+        .logout-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .content {
+            padding: 32px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* HOME PAGE */
+        .home-page {
             display: none;
         }
-        
-        .tab-content.active {
+
+        .home-page.active {
             display: block;
         }
-        
+
+        .home-logo-container {
+            text-align: center;
+            margin-bottom: 50px;
+            margin-top: 20px;
+        }
+
+        .home-logo-container svg {
+            width: 180px;
+            height: auto;
+        }
+
+        .home-title {
+            text-align: center;
+            font-size: 40px;
+            font-weight: 800;
+            color: #2c3e50;
+            margin-bottom: 50px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .nav-card {
+            background: white;
+            border-radius: 16px;
+            padding: 50px 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(52, 73, 94, 0.05), rgba(52, 73, 94, 0.02));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-16px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            border-color: #34495e;
+        }
+
+        .nav-card:hover::before {
+            opacity: 1;
+        }
+
+        .nav-card-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-card-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .nav-card-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .nav-card-description {
+            font-size: 15px;
+            color: #7f8c8d;
+            line-height: 1.7;
+        }
+
+        /* DASHBOARD PAGES */
+        .dashboard-page {
+            display: none;
+        }
+
+        .dashboard-page.active {
+            display: block;
+        }
+
         .filters {
             background: white;
+            padding: 24px;
             border-radius: 12px;
-            padding: 28px;
-            margin-bottom: 32px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e2e8f0;
+            margin-bottom: 32px;
         }
-        
+
         .filter-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
-            margin-bottom: 20px;
         }
-        
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
         .filter-group label {
-            display: block;
-            font-size: 12px;
-            font-weight: 800;
-            margin-bottom: 10px;
-            color: #2c3e50;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 13px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            color: #34495e;
+            letter-spacing: 0.5px;
         }
-        
-        input[type="date"], select {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1.5px solid #cbd5e0;
-            border-radius: 8px;
-            font-size: 14px;
+
+        .filter-group input,
+        .filter-group select {
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
             background: white;
-            transition: all 0.2s ease;
-            color: #2c3e50;
-            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
-        
-        input[type="date"]:focus, select:focus {
+
+        .filter-group input:focus,
+        .filter-group select:focus {
             outline: none;
             border-color: #34495e;
             box-shadow: 0 0 0 3px rgba(52, 73, 94, 0.1);
         }
-        
-        .detail-filters {
-            padding-top: 20px;
-            border-top: 1.5px solid #e2e8f0;
-        }
-        
-        .detail-filters label {
-            display: block;
-            font-size: 12px;
-            font-weight: 800;
-            margin-bottom: 10px;
-            color: #2c3e50;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .detail-filters select {
-            max-width: 500px;
-        }
-        
+
         .kpis {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 20px;
-            margin-bottom: 36px;
+            margin-bottom: 32px;
         }
-        
+
         .kpi-card {
             background: white;
-            border-radius: 12px;
             padding: 24px;
+            border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            border-left: 5px solid;
+            border-left: 4px solid #34495e;
             transition: all 0.3s ease;
-            border: 1px solid #e2e8f0;
         }
-        
+
+        .kpi-card.new {
+            border-left-color: #27ae60;
+        }
+
+        .kpi-card.react {
+            border-left-color: #3498db;
+        }
+
+        .kpi-card.revenue {
+            border-left-color: #e74c3c;
+        }
+
         .kpi-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
         }
-        
-        .kpi-card.new { border-left-color: #3498db; }
-        .kpi-card.react { border-left-color: #e74c3c; }
-        .kpi-card.revenue { border-left-color: #27ae60; }
-        .kpi-card.rate { border-left-color: #9b59b6; }
-        
+
         .kpi-label {
             font-size: 12px;
             color: #7f8c8d;
-            margin: 0;
-            font-weight: 800;
+            font-weight: 700;
             text-transform: uppercase;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
         }
-        
-        .kpi-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 12px;
-        }
-        
+
         .kpi-value {
             font-size: 32px;
             font-weight: 800;
             color: #2c3e50;
+            margin: 0;
         }
-        
-        .kpi-trend {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            font-weight: 700;
-        }
-        
-        .kpi-trend.up { color: #27ae60; }
-        .kpi-trend.down { color: #e74c3c; }
-        
+
         .charts-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 20px;
             margin-bottom: 32px;
         }
-        
+
         .chart-card {
             background: white;
-            border-radius: 12px;
             padding: 24px;
+            border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            border: 1px solid #e2e8f0;
         }
-        
-        .chart-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
-        }
-        
+
         .chart-card h3 {
-            margin: 0 0 20px 0;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 800;
+            margin-bottom: 20px;
             color: #2c3e50;
         }
-        
+
         .chart-container {
-            width: 100%;
-            height: 350px;
             position: relative;
-        }
-        
-        .mix-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 40px;
             height: 300px;
         }
-        
-        .mix-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .mix-circle {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-weight: 800;
-            font-size: 24px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .mix-circle.new {
-            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-        }
-        
-        .mix-circle.react {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-        }
-        
-        .mix-label {
-            font-weight: 700;
-            color: #2c3e50;
-            font-size: 13px;
-        }
-        
+
         .table-card {
             background: white;
-            border-radius: 12px;
             padding: 24px;
+            border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            grid-column: 1 / -1;
-            border: 1px solid #e2e8f0;
         }
-        
+
         .table-card h3 {
-            margin: 0 0 20px 0;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 800;
+            margin-bottom: 20px;
             color: #2c3e50;
         }
-        
+
         table {
             width: 100%;
-            font-size: 13px;
             border-collapse: collapse;
+            font-size: 13px;
         }
-        
-        thead tr {
+
+        table thead {
             background: #f8f9fa;
-            border-bottom: 2px solid #34495e;
+            border-bottom: 2px solid #e2e8f0;
         }
-        
-        th {
+
+        table th {
+            padding: 12px;
             text-align: left;
-            padding: 14px;
-            font-weight: 800;
-            font-size: 12px;
+            font-weight: 700;
+            color: #2c3e50;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: #2c3e50;
+            font-size: 11px;
+            letter-spacing: 0.5px;
         }
-        
-        td {
-            padding: 12px 14px;
+
+        table td {
+            padding: 12px;
             border-bottom: 1px solid #e2e8f0;
-            color: #2c3e50;
         }
-        
-        tbody tr:hover {
-            background: #f9fafb;
+
+        table tbody tr:hover {
+            background: #f8f9fa;
         }
-        
-        .value-new { color: #3498db; font-weight: 800; }
-        .value-react { color: #e74c3c; font-weight: 800; }
-        .value-revenue { color: #27ae60; font-weight: 800; }
-        
+
+        .value-new {
+            color: #27ae60;
+            font-weight: 700;
+        }
+
+        .value-react {
+            color: #3498db;
+            font-weight: 700;
+        }
+
+        .value-yes {
+            color: #27ae60;
+            font-weight: 700;
+        }
+
+        .value-no {
+            color: #7f8c8d;
+        }
+
         .export-btn {
-            padding: 14px 32px;
-            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #34495e, #2c3e50);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 800;
+            border-radius: 6px;
             cursor: pointer;
+            font-weight: 700;
+            font-size: 13px;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             text-transform: uppercase;
-            letter-spacing: 0.8px;
+            letter-spacing: 0.5px;
+            margin-top: 20px;
         }
-        
+
         .export-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
         }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content {
+                padding: 16px;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- LOGIN SCREEN -->
-    <div class="login-container" id="loginScreen">
+    <!-- LOGIN PAGE -->
+    <div class="auth-container" id="authContainer">
         <div class="login-box">
-            <div class="login-header">
-                <svg class="login-logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 170.1 36.4" style="enable-background:new 0 0 170.1 36.4;">
-                    <style type="text/css">
-                        .st0{fill:#CC0000;}
-                    </style>
-                    <path id="Wortmarke_pos" d="M118.5,30.4h7.3l-5.2-9c2.9-1.2,4.5-3.6,4.5-6.6c0-4.6-3-7.6-9-7.6h-11.5v23.2h6.3v-8.1h3.2L118.5,30.4  L118.5,30.4z M118.7,14.8c0,1.6-1.1,2.8-3.5,2.8h-4.4V12h4.4C117.6,12,118.7,13.2,118.7,14.8L118.7,14.8L118.7,14.8z M93.3,13.7v7.4  c0,3.4-1.6,4.5-3.8,4.5c-2.1,0-3.8-1.2-3.8-4.5v-7.5h-6.4v7.8c0,6.1,3.4,9.5,10.3,9.5c6.9,0,10.2-3.4,10.2-9.4v-7.8H93.3L93.3,13.7z   M85.7,11.6V7.2h-6.4v4.4H85.7L85.7,11.6z M93.3,11.6h6.4V7.2h-6.4V11.6L93.3,11.6z M52.7,22.6L49.4,7.2H43l5.9,23.2h6.8l4-15.2  l4,15.2h6.8l5.9-23.2H70l-3.3,15.4l-4-15.4h-6L52.7,22.6L52.7,22.6z M163.6,15.5h-7.8V7.2h-6.4v23.2h6.4v-9.7h7.8v9.7h6.5V7.2h-6.5  V15.5L163.6,15.5z M133.4,12.3v18.2h6.4V12.3h6V7.2h-18.4v5.1H133.4L133.4,12.3z"/>
-                    <path class="st0" d="M33.3,14.3H0V0h13.9v5.6h5.6V0h13.9V14.3L33.3,14.3z M19.4,30.9v5.6c8-1.5,13.9-8.4,13.9-16.2v-0.3H0v0.3  C0,28,5.9,34.9,13.9,36.4v-5.6H19.4L19.4,30.9z"/>
-                </svg>
-                <h1>🔐 Login</h1>
-                <p>Access your Shops Analytics Dashboard</p>
-            </div>
-            <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
-                <div class="login-error" id="loginError"></div>
-                
+            <svg class="login-logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 170.1 36.4">
+                <style type="text/css">.st0{fill:#CC0000;}</style>
+                <path id="Wortmarke_pos" d="M118.5,30.4h7.3l-5.2-9c2.9-1.2,4.5-3.6,4.5-6.6c0-4.6-3-7.6-9-7.6h-11.5v23.2h6.3v-8.1h3.2L118.5,30.4 L118.5,30.4z M118.7,14.8c0,1.6-1.1,2.8-3.5,2.8h-4.4V12h4.4C117.6,12,118.7,13.2,118.7,14.8L118.7,14.8L118.7,14.8z M93.3,13.7v7.4 c0,3.4-1.6,4.5-3.8,4.5c-2.1,0-3.8-1.2-3.8-4.5v-7.5h-6.4v7.8c0,6.1,3.4,9.5,10.3,9.5c6.9,0,10.2-3.4,10.2-9.4v-7.8H93.3L93.3,13.7z M85.7,11.6V7.2h-6.4v4.4H85.7L85.7,11.6z M93.3,11.6h6.4V7.2h-6.4V11.6L93.3,11.6z M52.7,22.6L49.4,7.2H43l5.9,23.2h6.8l4-15.2 l4,15.2h6.8l5.9-23.2H70l-3.3,15.4l-4-15.4h-6L52.7,22.6L52.7,22.6z M163.6,15.5h-7.8V7.2h-6.4v23.2h6.4v-9.7h7.8v9.7h6.5V7.2h-6.5 V15.5L163.6,15.5z M133.4,12.3v18.2h6.4V12.3h6V7.2h-18.4v5.1H133.4L133.4,12.3z"/>
+                <path class="st0" d="M33.3,14.3H0V0h13.9v5.6h5.6V0h13.9V14.3L33.3,14.3z M19.4,30.9v5.6c8-1.5,13.9-8.4,13.9-16.2v-0.3H0v0.3 C0,28,5.9,34.9,13.9,36.4v-5.6H19.4L19.4,30.9z"/>
+            </svg>
+            <h2 class="login-title">Login</h2>
+            <form onsubmit="handleLogin(event)">
                 <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" required placeholder="you@example.com">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
                 </div>
-                
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" required placeholder="••••••••">
+                    <input type="password" id="password" required>
                 </div>
-                
-                <div class="checkbox-group">
+                <div class="remember-me">
                     <input type="checkbox" id="rememberMe">
-                    <label for="rememberMe">Remember Me</label>
+                    <label for="rememberMe" style="margin: 0; text-transform: none; font-weight: 400; font-size: 13px;">Remember me</label>
                 </div>
-                
-                <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
+                <button type="submit" class="login-btn">Sign In</button>
+                <div class="error-msg" id="errorMsg"></div>
             </form>
         </div>
     </div>
 
     <!-- DASHBOARD -->
-    <div class="dashboard" id="dashboardContainer">
-        <!-- Header -->
+    <div class="dashboard-container" id="dashboardContainer">
+        <!-- HEADER -->
         <div class="header">
             <div class="header-left">
-                <h1>📊 Shops Analytics Dashboard</h1>
-                <p>Real-time insights into client acquisition and reactivation performance</p>
+                <svg class="header-logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 170.1 36.4">
+                    <style type="text/css">.st0{fill:#FFFFFF;}</style>
+                    <path id="Wortmarke_pos" d="M118.5,30.4h7.3l-5.2-9c2.9-1.2,4.5-3.6,4.5-6.6c0-4.6-3-7.6-9-7.6h-11.5v23.2h6.3v-8.1h3.2L118.5,30.4 L118.5,30.4z M118.7,14.8c0,1.6-1.1,2.8-3.5,2.8h-4.4V12h4.4C117.6,12,118.7,13.2,118.7,14.8L118.7,14.8L118.7,14.8z M93.3,13.7v7.4 c0,3.4-1.6,4.5-3.8,4.5c-2.1,0-3.8-1.2-3.8-4.5v-7.5h-6.4v7.8c0,6.1,3.4,9.5,10.3,9.5c6.9,0,10.2-3.4,10.2-9.4v-7.8H93.3L93.3,13.7z M85.7,11.6V7.2h-6.4v4.4H85.7L85.7,11.6z M93.3,11.6h6.4V7.2h-6.4V11.6L93.3,11.6z M52.7,22.6L49.4,7.2H43l5.9,23.2h6.8l4-15.2 l4,15.2h6.8l5.9-23.2H70l-3.3,15.4l-4-15.4h-6L52.7,22.6L52.7,22.6z M163.6,15.5h-7.8V7.2h-6.4v23.2h6.4v-9.7h7.8v9.7h6.5V7.2h-6.5 V15.5L163.6,15.5z M133.4,12.3v18.2h6.4V12.3h6V7.2h-18.4v5.1H133.4L133.4,12.3z"/>
+                    <path class="st0" d="M33.3,14.3H0V0h13.9v5.6h5.6V0h13.9V14.3L33.3,14.3z M19.4,30.9v5.6c8-1.5,13.9-8.4,13.9-16.2v-0.3H0v0.3 C0,28,5.9,34.9,13.9,36.4v-5.6H19.4L19.4,30.9z"/>
+                </svg>
+                <h1 class="header-title" id="pageTitle">Dashboard</h1>
             </div>
             <div class="header-right">
-                <div class="user-info">
-                    <div class="email" id="userEmail"></div>
-                    <button class="logout-btn" onclick="handleLogout()">Logout</button>
-                </div>
+                <button class="home-btn" onclick="goHome()">🏠 Home</button>
+                <button class="logout-btn" onclick="handleLogout()">Logout</button>
             </div>
         </div>
 
-        <!-- Tabs -->
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('shops')">🏪 By Shop</button>
-            <button class="tab-btn" onclick="switchTab('reps')">👤 By Sales Rep</button>
-            <button class="tab-btn" onclick="switchTab('codes')">📦 By Business Code</button>
-        </div>
-
-        <!-- SHOPS TAB -->
-        <div id="shops" class="tab-content active">
-            <div class="filters">
-                <div class="filter-grid">
-                    <div class="filter-group">
-                        <label>📅 Start Date</label>
-                        <input type="date" id="startDate1" value="2026-06-02" onchange="updateDashboard()">
+        <!-- CONTENT -->
+        <div class="content">
+            <!-- HOME PAGE -->
+            <div class="home-page active" id="homePage">
+                <div class="home-logo-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 170.1 36.4">
+                        <style type="text/css">.st0{fill:#CC0000;}</style>
+                        <path id="Wortmarke_pos" d="M118.5,30.4h7.3l-5.2-9c2.9-1.2,4.5-3.6,4.5-6.6c0-4.6-3-7.6-9-7.6h-11.5v23.2h6.3v-8.1h3.2L118.5,30.4 L118.5,30.4z M118.7,14.8c0,1.6-1.1,2.8-3.5,2.8h-4.4V12h4.4C117.6,12,118.7,13.2,118.7,14.8L118.7,14.8L118.7,14.8z M93.3,13.7v7.4 c0,3.4-1.6,4.5-3.8,4.5c-2.1,0-3.8-1.2-3.8-4.5v-7.5h-6.4v7.8c0,6.1,3.4,9.5,10.3,9.5c6.9,0,10.2-3.4,10.2-9.4v-7.8H93.3L93.3,13.7z M85.7,11.6V7.2h-6.4v4.4H85.7L85.7,11.6z M93.3,11.6h6.4V7.2h-6.4V11.6L93.3,11.6z M52.7,22.6L49.4,7.2H43l5.9,23.2h6.8l4-15.2 l4,15.2h6.8l5.9-23.2H70l-3.3,15.4l-4-15.4h-6L52.7,22.6L52.7,22.6z M163.6,15.5h-7.8V7.2h-6.4v23.2h6.4v-9.7h7.8v9.7h6.5V7.2h-6.5 V15.5L163.6,15.5z M133.4,12.3v18.2h6.4V12.3h6V7.2h-18.4v5.1H133.4L133.4,12.3z"/>
+                        <path class="st0" d="M33.3,14.3H0V0h13.9v5.6h5.6V0h13.9V14.3L33.3,14.3z M19.4,30.9v5.6c8-1.5,13.9-8.4,13.9-16.2v-0.3H0v0.3 C0,28,5.9,34.9,13.9,36.4v-5.6H19.4L19.4,30.9z"/>
+                    </svg>
+                </div>
+                <h2 class="home-title">📊 Analytics Dashboard</h2>
+                <div class="cards-grid">
+                    <div class="nav-card" onclick="showPage('shops')">
+                        <div class="nav-card-content">
+                            <span class="nav-card-icon">🏪</span>
+                            <h3 class="nav-card-title">Shops Data</h3>
+                            <p class="nav-card-description">Track new client acquisitions and reactivations across PUS shop locations nationwide</p>
+                        </div>
                     </div>
-                    <div class="filter-group">
-                        <label>📅 End Date</label>
-                        <input type="date" id="endDate1" value="2026-07-15" onchange="updateDashboard()">
-                    </div>
-                    <div class="filter-group">
-                        <label>⏱️ Time Grouping</label>
-                        <select id="grouping1" onchange="updateDashboard()">
-                            <option value="daily">Daily</option>
-                            <option value="weekly">Weekly</option>
-                            <option value="monthly">Monthly</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label>👥 Client Type</label>
-                        <select id="clientType1" onchange="updateDashboard()">
-                            <option value="both">Both Types</option>
-                            <option value="new">New Only</option>
-                            <option value="react">Reactivated Only</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="detail-filters">
-                    <label>🏪 Shop Location (MAIN FILTER)</label>
-                    <select id="shopFilter1" onchange="updateDashboard()">
-                        <option value="">All Shop Locations</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="kpis">
-                <div class="kpi-card new">
-                    <p class="kpi-label">New Clients</p>
-                    <div class="kpi-top"><p class="kpi-value" id="newCount1">16</p><div class="kpi-trend up"><span>↑</span></div></div>
-                </div>
-                <div class="kpi-card react">
-                    <p class="kpi-label">Reactivated Clients</p>
-                    <div class="kpi-top"><p class="kpi-value" id="reactCount1">12</p><div class="kpi-trend up"><span>↑</span></div></div>
-                </div>
-                <div class="kpi-card revenue">
-                    <p class="kpi-label">Total Revenue (ZAR)</p>
-                    <div class="kpi-top"><p class="kpi-value" id="totalRevenue1">R28,145</p><div class="kpi-trend up"><span>↑</span></div></div>
-                </div>
-                <div class="kpi-card rate">
-                    <p class="kpi-label">Reactivation Rate</p>
-                    <div class="kpi-top"><p class="kpi-value" id="reactivationRate1">42.9%</p><div class="kpi-trend up"><span>↑</span></div></div>
-                </div>
-            </div>
-
-            <div class="charts-grid">
-                <div class="chart-card">
-                    <h3>📈 Enrollments Over Time</h3>
-                    <div class="chart-container">
-                        <canvas id="timeSeriesChart"></canvas>
-                    </div>
-                </div>
-                <div class="chart-card">
-                    <h3>🎯 Client Mix</h3>
-                    <div style="height: 350px; display: flex; align-items: center; justify-content: center;">
-                        <div class="mix-container" id="mixContainer"></div>
+                    <div class="nav-card" onclick="showPage('ebusiness')">
+                        <div class="nav-card-content">
+                            <span class="nav-card-icon">🌐</span>
+                            <h3 class="nav-card-title">E-Business</h3>
+                            <p class="nav-card-description">Analyze e-commerce channel performance, customer engagement and revenue trends</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="charts-grid">
-                <div class="chart-card" style="grid-column: 1 / -1;">
-                    <h3>🏪 Performance by Shop</h3>
-                    <div class="chart-container"><canvas id="shopChart"></canvas></div>
-                </div>
-            </div>
-
-            <div class="charts-grid">
-                <div class="table-card">
-                    <h3>📋 Shop Performance Details</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Shop Location</th>
-                                <th>New Clients</th>
-                                <th>Reactivated</th>
-                                <th>Total Clients</th>
-                                <th>Total Revenue (ZAR)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="shopTable">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- REPS TAB -->
-        <div id="reps" class="tab-content">
-            <div class="filters">
-                <div class="filter-grid">
-                    <div class="filter-group">
-                        <label>📅 Start Date</label>
-                        <input type="date" id="startDate2" value="2026-06-02" onchange="updateDashboard()">
-                    </div>
-                    <div class="filter-group">
-                        <label>📅 End Date</label>
-                        <input type="date" id="endDate2" value="2026-07-15" onchange="updateDashboard()">
-                    </div>
-                    <div class="filter-group">
-                        <label>👥 Client Type</label>
-                        <select id="clientType2" onchange="updateDashboard()">
-                            <option value="both">Both Types</option>
-                            <option value="new">New Only</option>
-                            <option value="react">Reactivated Only</option>
-                        </select>
+            <!-- SHOPS DASHBOARD -->
+            <div class="dashboard-page" id="shopsPage">
+                <div class="filters">
+                    <div class="filter-grid">
+                        <div class="filter-group">
+                            <label>📅 Start Date</label>
+                            <input type="date" id="startDate1" onchange="updateShopsDashboard()">
+                        </div>
+                        <div class="filter-group">
+                            <label>📅 End Date</label>
+                            <input type="date" id="endDate1" onchange="updateShopsDashboard()">
+                        </div>
+                        <div class="filter-group">
+                            <label>👥 Client Type</label>
+                            <select id="clientType1" onchange="updateShopsDashboard()">
+                                <option value="">Both</option>
+                                <option value="New">New Clients</option>
+                                <option value="React">Reactivated</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>🏢 Shop Location</label>
+                            <select id="shopFilter1" onchange="updateShopsDashboard()">
+                                <option value="">All Shops</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-                <div class="detail-filters">
-                    <label>🏪 Shop Location (MAIN FILTER)</label>
-                    <select id="shopFilter2" onchange="updateDashboard()">
-                        <option value="">All Shop Locations</option>
-                    </select>
-                </div>
-            </div>
 
-            <div class="charts-grid">
-                <div class="chart-card" style="grid-column: 1 / -1;">
-                    <h3>👤 Sales Rep Performance</h3>
-                    <div class="chart-container"><canvas id="repChart"></canvas></div>
-                </div>
-            </div>
-
-            <div class="charts-grid">
-                <div class="table-card">
-                    <h3>📋 Sales Rep Details</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Sales Rep</th>
-                                <th>New Clients</th>
-                                <th>Reactivated</th>
-                                <th>Total Clients</th>
-                                <th>Total Revenue (ZAR)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="repTable">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- CODES TAB -->
-        <div id="codes" class="tab-content">
-            <div class="filters">
-                <div class="filter-grid">
-                    <div class="filter-group">
-                        <label>📅 Start Date</label>
-                        <input type="date" id="startDate3" value="2026-06-02" onchange="updateDashboard()">
+                <div class="kpis">
+                    <div class="kpi-card new">
+                        <p class="kpi-label">New Clients</p>
+                        <p class="kpi-value" id="newCount">-</p>
                     </div>
-                    <div class="filter-group">
-                        <label>📅 End Date</label>
-                        <input type="date" id="endDate3" value="2026-07-15" onchange="updateDashboard()">
+                    <div class="kpi-card react">
+                        <p class="kpi-label">Reactivated</p>
+                        <p class="kpi-value" id="reactCount">-</p>
                     </div>
-                    <div class="filter-group">
-                        <label>👥 Client Type</label>
-                        <select id="clientType3" onchange="updateDashboard()">
-                            <option value="both">Both Types</option>
-                            <option value="new">New Only</option>
-                            <option value="react">Reactivated Only</option>
-                        </select>
+                    <div class="kpi-card revenue">
+                        <p class="kpi-label">Total Revenue (ZAR)</p>
+                        <p class="kpi-value" id="totalRevenue">R0</p>
                     </div>
                 </div>
-                <div class="detail-filters">
-                    <label>🏪 Shop Location (MAIN FILTER)</label>
-                    <select id="shopFilter3" onchange="updateDashboard()">
-                        <option value="">All Shop Locations</option>
-                    </select>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>📈 Trend Over Time</h3>
+                        <div class="chart-container"><canvas id="timeSeriesChart"></canvas></div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>🏪 Performance by Shop</h3>
+                        <div class="chart-container"><canvas id="shopChart"></canvas></div>
+                    </div>
                 </div>
+
+                <div class="charts-grid">
+                    <div class="table-card">
+                        <h3>📋 Shop Transaction Details</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Shop</th>
+                                    <th>Rep ID</th>
+                                    <th>Business Code</th>
+                                    <th>Customer</th>
+                                    <th>Type</th>
+                                    <th>Revenue (ZAR)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="shopsTable">
+                                <tr><td colspan="7" style="text-align: center; padding: 20px;">Loading data...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <button class="export-btn" onclick="exportShopsData()">📥 Export Shops Data</button>
             </div>
 
-            <div class="charts-grid">
-                <div class="chart-card" style="grid-column: 1 / -1;">
-                    <h3>📦 Business Code Performance</h3>
-                    <div class="chart-container"><canvas id="codeChart"></canvas></div>
+            <!-- E-BUSINESS DASHBOARD -->
+            <div class="dashboard-page" id="ebusinessPage">
+                <div class="filters">
+                    <div class="filter-grid">
+                        <div class="filter-group">
+                            <label>📅 Start Date</label>
+                            <input type="date" id="ebStartDate" onchange="updateEBusinessDashboard()">
+                        </div>
+                        <div class="filter-group">
+                            <label>📅 End Date</label>
+                            <input type="date" id="ebEndDate" onchange="updateEBusinessDashboard()">
+                        </div>
+                        <div class="filter-group">
+                            <label>👤 CSC (Sales Rep)</label>
+                            <select id="ebCSC" onchange="updateEBusinessDashboard()">
+                                <option value="">All Representatives</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>📞 CCP (Contact Point)</label>
+                            <select id="ebCCP" onchange="updateEBusinessDashboard()">
+                                <option value="">All Contact Points</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="charts-grid">
-                <div class="table-card">
-                    <h3>📋 Business Code Details</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Business Code</th>
-                                <th>New Clients</th>
-                                <th>Reactivated</th>
-                                <th>Total Clients</th>
-                                <th>Total Revenue (ZAR)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="codeTable">
-                        </tbody>
-                    </table>
+                <div class="kpis">
+                    <div class="kpi-card new">
+                        <p class="kpi-label">New Transactions</p>
+                        <p class="kpi-value" id="ebNewCount">-</p>
+                    </div>
+                    <div class="kpi-card react">
+                        <p class="kpi-label">Reactivated</p>
+                        <p class="kpi-value" id="ebReactCount">-</p>
+                    </div>
+                    <div class="kpi-card revenue">
+                        <p class="kpi-label">Total Gross Profit (ZAR)</p>
+                        <p class="kpi-value" id="ebGrossProfit">R0</p>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Export Button -->
-        <div class="charts-grid">
-            <button class="export-btn" onclick="exportToExcel()">📥 Export Report</button>
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>📈 Monthly Revenue Trend</h3>
+                        <div class="chart-container"><canvas id="ebTrendChart"></canvas></div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>🏆 Top Customers by Revenue</h3>
+                        <div class="chart-container"><canvas id="ebTopCustomersChart"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="table-card">
+                        <h3>📋 All E-Business Customers</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Customer Number</th>
+                                    <th>Customer Name</th>
+                                    <th>First Purchase</th>
+                                    <th>Last Purchase</th>
+                                    <th>Total Revenue</th>
+                                    <th>Orders</th>
+                                    <th>New</th>
+                                    <th>Reactivated</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ebCustomerTable">
+                                <tr><td colspan="8" style="text-align: center; padding: 20px;">Ready for data import...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <button class="export-btn" onclick="exportEBusinessData()">📥 Export E-Business Data</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // ============================================
-        // SUPABASE INITIALIZATION
-        // ============================================
+        // Supabase Configuration
         const SUPABASE_URL = 'https://cwmigqhaegaryatrcdee.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_dykPG8rdps9iWDJYefM1Ig_QClCJUf0';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        window.supabaseClient = window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_ANON_KEY
-        );
-
-        // ============================================
-        // AUTHENTICATION HANDLERS
-        // ============================================
-        async function handleLogin(event) {
-            event.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const rememberMe = document.getElementById('rememberMe').checked;
-            const loginBtn = document.getElementById('loginBtn');
-            const loginError = document.getElementById('loginError');
-            
-            loginBtn.disabled = true;
-            loginError.classList.remove('show');
-            
-            try {
-                const { data, error } = await window.supabaseClient.auth.signInWithPassword({
-                    email,
-                    password
-                });
-                
-                if (error) throw new Error(error.message);
-                
-                // Handle Remember Me
-                if (rememberMe) {
-                    localStorage.setItem('rememberedEmail', email);
-                } else {
-                    localStorage.removeItem('rememberedEmail');
-                }
-                
-                // Show dashboard
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('dashboardContainer').classList.add('active');
-                document.getElementById('userEmail').textContent = email;
-                
-                // Initialize dashboard
-                initDropdowns();
-                updateDashboard();
-                
-            } catch (err) {
-                loginError.textContent = '❌ ' + (err.message || 'Login failed. Please check your credentials.');
-                loginError.classList.add('show');
-                loginBtn.disabled = false;
-            }
-        }
-
-        async function handleLogout() {
-            try {
-                await window.supabaseClient.auth.signOut();
-                
-                // Reset login form
-                document.getElementById('loginForm').reset();
-                document.getElementById('loginError').classList.remove('show');
-                
-                // Show login screen
-                document.getElementById('loginScreen').style.display = 'flex';
-                document.getElementById('dashboardContainer').classList.remove('active');
-                
-                // Prefill email if Remember Me was used
-                const rememberedEmail = localStorage.getItem('rememberedEmail');
-                if (rememberedEmail) {
-                    document.getElementById('email').value = rememberedEmail;
-                }
-                
-            } catch (err) {
-                console.error('Logout error:', err);
-                alert('Error logging out. Please refresh the page.');
-            }
-        }
-
-        // Check for remembered email on page load
-        window.addEventListener('DOMContentLoaded', function() {
-            const rememberedEmail = localStorage.getItem('rememberedEmail');
-            if (rememberedEmail) {
-                document.getElementById('email').value = rememberedEmail;
-            }
-        });
-
-        // ============================================
-        // DASHBOARD FUNCTIONALITY (UNCHANGED)
-        // ============================================
-        
+        // Shops Data
         const rawData = [
             { Status: 'New', 'Sales Day': '2026/06/10', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 2273, 'Business Code': 'I001', 'Cust Name': 'Dom Wiid Electrical', 'Turnover in ZAR': 1465.06 },
             { Status: 'New', 'Sales Day': '2026/06/09', 'Sales Group': 'PUS Cape Town', 'Sales Rep': 2273, 'Business Code': 'S002', 'Cust Name': 'Khalsiya Meat Corporation (Pty) ltd', 'Turnover in ZAR': 2081.33 },
@@ -985,188 +849,203 @@
             { Status: 'React', 'Sales Day': '2026/07/16', 'Sales Group': 'PUS Silverton', 'Sales Rep': 9120, 'Business Code': 'M006', 'Cust Name': 'Fabnimax(Pty)Ltd', 'Turnover in ZAR': 819.64 }
         ];
 
+        // E-Business Data (will be populated)
+        let ebCustomerData = [];
+        let ebRawTransactions = [];
+
+        // Authentication
+        async function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+
+                if (document.getElementById('rememberMe').checked) {
+                    localStorage.setItem('rememberedEmail', email);
+                }
+
+                document.getElementById('authContainer').style.display = 'none';
+                document.getElementById('dashboardContainer').classList.add('active');
+                initializeDashboard();
+            } catch (err) {
+                errorMsg.textContent = 'Login failed. Please check your credentials.';
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        async function handleLogout() {
+            await supabaseClient.auth.signOut();
+            document.getElementById('dashboardContainer').classList.remove('active');
+            document.getElementById('authContainer').style.display = 'flex';
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        function initializeDashboard() {
+            const rememberedEmail = localStorage.getItem('rememberedEmail');
+            if (rememberedEmail) {
+                document.getElementById('email').value = rememberedEmail;
+            }
+            initShopsFilters();
+            updateShopsDashboard();
+        }
+
+        // NAVIGATION
+        function goHome() {
+            document.querySelectorAll('.dashboard-page').forEach(el => el.classList.remove('active'));
+            document.getElementById('homePage').classList.add('active');
+            document.getElementById('pageTitle').textContent = 'Dashboard';
+            destroyAllCharts();
+        }
+
+        function showPage(page) {
+            document.getElementById('homePage').classList.remove('active');
+            document.querySelectorAll('.dashboard-page').forEach(el => el.classList.remove('active'));
+
+            if (page === 'shops') {
+                document.getElementById('shopsPage').classList.add('active');
+                document.getElementById('pageTitle').textContent = 'Shops Data';
+                updateShopsDashboard();
+            } else if (page === 'ebusiness') {
+                document.getElementById('ebusinessPage').classList.add('active');
+                document.getElementById('pageTitle').textContent = 'E-Business';
+                initEBusinessFilters();
+                updateEBusinessDashboard();
+            }
+        }
+
+        // SHOPS DASHBOARD
         let timeSeriesChartInstance = null;
         let shopChartInstance = null;
-        let repChartInstance = null;
-        let codeChartInstance = null;
 
-        function initDropdowns() {
-            const shops = [...new Set(rawData.map(row => row['Sales Group']))].sort();
-            const filters = ['shopFilter1', 'shopFilter2', 'shopFilter3'];
-            
-            filters.forEach(filterId => {
-                const select = document.getElementById(filterId);
-                select.innerHTML = '<option value="">All Shop Locations</option>';
-                shops.forEach(shop => {
-                    const option = document.createElement('option');
-                    option.value = shop;
-                    option.textContent = shop;
-                    select.appendChild(option);
-                });
+        function initShopsFilters() {
+            const shops = [...new Set(rawData.map(r => r['Sales Group']))].sort();
+            const shopSelect = document.getElementById('shopFilter1');
+            shopSelect.innerHTML = '<option value="">All Shops</option>';
+            shops.forEach(shop => {
+                const option = document.createElement('option');
+                option.value = shop;
+                option.textContent = shop;
+                shopSelect.appendChild(option);
             });
         }
 
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(tab).classList.add('active');
-            event.target.classList.add('active');
-            updateDashboard();
-        }
+        function updateShopsDashboard() {
+            const startDate = document.getElementById('startDate1').value;
+            const endDate = document.getElementById('endDate1').value;
+            const clientType = document.getElementById('clientType1').value;
+            const shop = document.getElementById('shopFilter1').value;
 
-        function filterData(tabNum) {
-            const startDate = document.getElementById('startDate' + tabNum).value;
-            const endDate = document.getElementById('endDate' + tabNum).value;
-            const clientType = document.getElementById('clientType' + tabNum).value;
-            const shopFilter = document.getElementById('shopFilter' + tabNum).value;
-            
-            return rawData.filter(row => {
-                const date = row['Sales Day'].replace(/\//g, '-');
-                const inRange = date >= startDate && date <= endDate;
-                const typeMatch = clientType === 'both' || (clientType === 'new' && row.Status === 'New') || (clientType === 'react' && row.Status === 'React');
-                const shopMatch = !shopFilter || row['Sales Group'] === shopFilter;
-                return inRange && typeMatch && shopMatch;
-            });
-        }
+            let filtered = rawData;
 
-        function updateDashboard() {
-            const activeTab = document.querySelector('.tab-content.active').id;
-            
-            if (activeTab === 'shops') updateShopsTab();
-            else if (activeTab === 'reps') updateRepsTab();
-            else if (activeTab === 'codes') updateCodesTab();
-        }
+            if (startDate) {
+                filtered = filtered.filter(r => r['Sales Day'] >= startDate.replace(/-/g, '/'));
+            }
+            if (endDate) {
+                filtered = filtered.filter(r => r['Sales Day'] <= endDate.replace(/-/g, '/'));
+            }
+            if (clientType) {
+                filtered = filtered.filter(r => r.Status === clientType);
+            }
+            if (shop) {
+                filtered = filtered.filter(r => r['Sales Group'] === shop);
+            }
 
-        function updateShopsTab() {
-            const filtered = filterData(1);
-            
-            const newTotal = filtered.filter(r => r.Status === 'New').length;
-            const reactTotal = filtered.filter(r => r.Status === 'React').length;
+            const newCount = filtered.filter(r => r.Status === 'New').length;
+            const reactCount = filtered.filter(r => r.Status === 'React').length;
             const totalRev = filtered.reduce((sum, r) => sum + r['Turnover in ZAR'], 0);
-            const reactRate = totalRev === 0 ? 0 : ((reactTotal / (newTotal + reactTotal)) * 100).toFixed(1);
 
-            document.getElementById('newCount1').textContent = newTotal;
-            document.getElementById('reactCount1').textContent = reactTotal;
-            document.getElementById('totalRevenue1').textContent = 'R' + totalRev.toLocaleString('en-ZA', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            document.getElementById('reactivationRate1').textContent = reactRate + '%';
+            document.getElementById('newCount').textContent = newCount;
+            document.getElementById('reactCount').textContent = reactCount;
+            document.getElementById('totalRevenue').textContent = 'R' + totalRev.toFixed(2);
 
+            updateShopsTable(filtered);
             updateTimeSeriesChart(filtered);
-            updateMixCircles(filtered);
             updateShopChart(filtered);
-            updateShopTable(filtered);
         }
 
-        function updateRepsTab() {
-            const filtered = filterData(2);
-            updateRepChart(filtered);
-            updateRepTable(filtered);
-        }
-
-        function updateCodesTab() {
-            const filtered = filterData(3);
-            updateCodeChart(filtered);
-            updateCodeTable(filtered);
+        function updateShopsTable(data) {
+            let html = '';
+            data.slice(0, 100).forEach(row => {
+                html += `<tr>
+                    <td>${row['Sales Day']}</td>
+                    <td>${row['Sales Group']}</td>
+                    <td>${row['Sales Rep']}</td>
+                    <td>${row['Business Code']}</td>
+                    <td>${row['Cust Name']}</td>
+                    <td class="${row.Status === 'New' ? 'value-new' : 'value-react'}">${row.Status}</td>
+                    <td>R${row['Turnover in ZAR'].toFixed(2)}</td>
+                </tr>`;
+            });
+            document.getElementById('shopsTable').innerHTML = html || '<tr><td colspan="7" style="text-align: center; padding: 20px;">No data available</td></tr>';
         }
 
         function updateTimeSeriesChart(data) {
-            const grouping = document.getElementById('grouping1').value;
             const grouped = {};
-
             data.forEach(row => {
-                const date = new Date(row['Sales Day'].replace(/\//g, '-'));
-                let key;
-                
-                if (grouping === 'daily') {
-                    key = date.toISOString().split('T')[0];
-                } else if (grouping === 'weekly') {
-                    const weekStart = new Date(date);
-                    weekStart.setDate(date.getDate() - date.getDay());
-                    key = 'Week of ' + weekStart.toISOString().split('T')[0];
-                } else {
-                    key = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0');
+                const date = row['Sales Day'];
+                if (!grouped[date]) {
+                    grouped[date] = { New: 0, React: 0 };
                 }
-
-                if (!grouped[key]) grouped[key] = { New: 0, React: 0 };
-                grouped[key][row.Status === 'New' ? 'New' : 'React']++;
+                grouped[date][row.Status]++;
             });
 
-            const sorted = Object.entries(grouped).sort((a, b) => a[0].localeCompare(b[0]));
-            const labels = sorted.map(e => e[0]);
-            const newData = sorted.map(e => e[1].New);
-            const reactData = sorted.map(e => e[1].React);
+            const dates = Object.keys(grouped).sort();
+            const newData = dates.map(d => grouped[d].New);
+            const reactData = dates.map(d => grouped[d].React);
 
             const ctx = document.getElementById('timeSeriesChart').getContext('2d');
             if (timeSeriesChartInstance) timeSeriesChartInstance.destroy();
-            
+
             timeSeriesChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels: dates,
                     datasets: [
                         {
                             label: 'New Clients',
                             data: newData,
-                            borderColor: '#3498db',
-                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                            borderWidth: 3,
-                            fill: true,
+                            borderColor: '#27ae60',
+                            backgroundColor: 'rgba(39, 174, 96, 0.1)',
                             tension: 0.4,
-                            pointRadius: 6,
-                            pointBackgroundColor: '#3498db',
+                            fill: true
                         },
                         {
                             label: 'Reactivated',
                             data: reactData,
-                            borderColor: '#e74c3c',
-                            backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                            borderWidth: 3,
-                            fill: true,
+                            borderColor: '#3498db',
+                            backgroundColor: 'rgba(52, 152, 219, 0.1)',
                             tension: 0.4,
-                            pointRadius: 6,
-                            pointBackgroundColor: '#e74c3c',
+                            fill: true
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top' } },
+                    plugins: { legend: { position: 'bottom' } },
                     scales: { y: { beginAtZero: true } }
                 }
             });
         }
 
-        function updateMixCircles(data) {
-            const newCount = data.filter(r => r.Status === 'New').length;
-            const reactCount = data.filter(r => r.Status === 'React').length;
-            const total = newCount + reactCount;
-
-            const newPct = total === 0 ? 0 : ((newCount / total) * 100).toFixed(1);
-            const reactPct = total === 0 ? 0 : ((reactCount / total) * 100).toFixed(1);
-
-            document.getElementById('mixContainer').innerHTML = `
-                <div class="mix-item">
-                    <div class="mix-circle new">${newCount}</div>
-                    <div class="mix-label">New (${newPct}%)</div>
-                </div>
-                <div class="mix-item">
-                    <div class="mix-circle react">${reactCount}</div>
-                    <div class="mix-label">Reactivated (${reactPct}%)</div>
-                </div>
-            `;
-        }
-
         function updateShopChart(data) {
-            const shops = {};
+            const grouped = {};
             data.forEach(row => {
-                if (!shops[row['Sales Group']]) shops[row['Sales Group']] = { New: 0, React: 0 };
-                shops[row['Sales Group']][row.Status === 'New' ? 'New' : 'React']++;
+                const shop = row['Sales Group'];
+                if (!grouped[shop]) {
+                    grouped[shop] = { New: 0, React: 0 };
+                }
+                grouped[shop][row.Status]++;
             });
 
-            const sorted = Object.entries(shops).sort((a, b) => (a[1].New + a[1].React) - (b[1].New + b[1].React));
-            const labels = sorted.map(e => e[0]);
-            const newData = sorted.map(e => e[1].New);
-            const reactData = sorted.map(e => e[1].React);
+            const shops = Object.keys(grouped).sort();
+            const newData = shops.map(s => grouped[s].New);
+            const reactData = shops.map(s => grouped[s].React);
 
             const ctx = document.getElementById('shopChart').getContext('2d');
             if (shopChartInstance) shopChartInstance.destroy();
@@ -1174,306 +1053,258 @@
             shopChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: labels,
+                    labels: shops,
                     datasets: [
-                        { label: 'New', data: newData, backgroundColor: '#3498db' },
-                        { label: 'Reactivated', data: reactData, backgroundColor: '#e74c3c' }
+                        {
+                            label: 'New Clients',
+                            data: newData,
+                            backgroundColor: '#27ae60'
+                        },
+                        {
+                            label: 'Reactivated',
+                            data: reactData,
+                            backgroundColor: '#3498db'
+                        }
                     ]
                 },
                 options: {
                     indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top' } },
-                    scales: { x: { stacked: true }, y: { stacked: true } }
+                    plugins: { legend: { position: 'bottom' } },
+                    scales: { x: { beginAtZero: true } }
                 }
             });
         }
 
-        function updateRepChart(data) {
-            const reps = {};
-            data.forEach(row => {
-                if (!reps[row['Sales Rep']]) reps[row['Sales Rep']] = { New: 0, React: 0 };
-                reps[row['Sales Rep']][row.Status === 'New' ? 'New' : 'React']++;
+        // E-BUSINESS DASHBOARD
+        let ebTrendChartInstance = null;
+        let ebTopCustomersChartInstance = null;
+
+        function initEBusinessFilters() {
+            if (ebCustomerData.length === 0) return;
+
+            const cscs = [...new Set(ebCustomerData.map(c => c.CSC))].sort();
+            const ccps = [...new Set(ebCustomerData.map(c => c.CCP))].sort();
+
+            const cscSelect = document.getElementById('ebCSC');
+            cscSelect.innerHTML = '<option value="">All Representatives</option>';
+            cscs.forEach(csc => {
+                const option = document.createElement('option');
+                option.value = csc;
+                option.textContent = csc;
+                cscSelect.appendChild(option);
             });
 
-            const sorted = Object.entries(reps).sort((a, b) => (b[1].New + b[1].React) - (a[1].New + a[1].React)).slice(0, 10);
-            const labels = sorted.map(e => 'Rep ' + e[0]);
-            const newData = sorted.map(e => e[1].New);
-            const reactData = sorted.map(e => e[1].React);
-
-            const ctx = document.getElementById('repChart').getContext('2d');
-            if (repChartInstance) repChartInstance.destroy();
-
-            repChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        { label: 'New', data: newData, backgroundColor: '#3498db' },
-                        { label: 'Reactivated', data: reactData, backgroundColor: '#e74c3c' }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top' } },
-                    scales: { y: { beginAtZero: true } }
-                }
+            const ccpSelect = document.getElementById('ebCCP');
+            ccpSelect.innerHTML = '<option value="">All Contact Points</option>';
+            ccps.forEach(ccp => {
+                const option = document.createElement('option');
+                option.value = ccp;
+                option.textContent = ccp;
+                ccpSelect.appendChild(option);
             });
         }
 
-        function updateCodeChart(data) {
-            const codes = {};
-            data.forEach(row => {
-                if (!codes[row['Business Code']]) codes[row['Business Code']] = { New: 0, React: 0, revenue: 0 };
-                codes[row['Business Code']][row.Status === 'New' ? 'New' : 'React']++;
-                codes[row['Business Code']].revenue += row['Turnover in ZAR'];
-            });
-
-            const sorted = Object.entries(codes).sort((a, b) => b[1].revenue - a[1].revenue).slice(0, 10);
-            const labels = sorted.map(e => e[0]);
-            const newData = sorted.map(e => e[1].New);
-            const reactData = sorted.map(e => e[1].React);
-
-            const ctx = document.getElementById('codeChart').getContext('2d');
-            if (codeChartInstance) codeChartInstance.destroy();
-
-            codeChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        { label: 'New', data: newData, backgroundColor: '#3498db' },
-                        { label: 'Reactivated', data: reactData, backgroundColor: '#e74c3c' }
-                    ]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top' } },
-                    scales: { x: { stacked: true }, y: { stacked: true } }
-                }
-            });
-        }
-
-        function updateShopTable(data) {
-            const shops = {};
-            data.forEach(row => {
-                if (!shops[row['Sales Group']]) shops[row['Sales Group']] = { New: 0, React: 0, revenue: 0 };
-                shops[row['Sales Group']][row.Status === 'New' ? 'New' : 'React']++;
-                shops[row['Sales Group']].revenue += row['Turnover in ZAR'];
-            });
-
-            let html = '';
-            Object.entries(shops).sort((a, b) => b[1].revenue - a[1].revenue).forEach(([shop, data]) => {
-                const total = data.New + data.React;
-                html += `<tr>
-                    <td>${shop}</td>
-                    <td class="value-new">${data.New}</td>
-                    <td class="value-react">${data.React}</td>
-                    <td>${total}</td>
-                    <td class="value-revenue">R${data.revenue.toFixed(2)}</td>
-                </tr>`;
-            });
-
-            document.getElementById('shopTable').innerHTML = html;
-        }
-
-        function updateRepTable(data) {
-            const reps = {};
-            data.forEach(row => {
-                if (!reps[row['Sales Rep']]) reps[row['Sales Rep']] = { New: 0, React: 0, revenue: 0 };
-                reps[row['Sales Rep']][row.Status === 'New' ? 'New' : 'React']++;
-                reps[row['Sales Rep']].revenue += row['Turnover in ZAR'];
-            });
-
-            let html = '';
-            Object.entries(reps).sort((a, b) => b[1].revenue - a[1].revenue).forEach(([rep, data]) => {
-                const total = data.New + data.React;
-                html += `<tr>
-                    <td>Rep ${rep}</td>
-                    <td class="value-new">${data.New}</td>
-                    <td class="value-react">${data.React}</td>
-                    <td>${total}</td>
-                    <td class="value-revenue">R${data.revenue.toFixed(2)}</td>
-                </tr>`;
-            });
-
-            document.getElementById('repTable').innerHTML = html;
-        }
-
-        function updateCodeTable(data) {
-            const codes = {};
-            data.forEach(row => {
-                if (!codes[row['Business Code']]) codes[row['Business Code']] = { New: 0, React: 0, revenue: 0 };
-                codes[row['Business Code']][row.Status === 'New' ? 'New' : 'React']++;
-                codes[row['Business Code']].revenue += row['Turnover in ZAR'];
-            });
-
-            let html = '';
-            Object.entries(codes).sort((a, b) => b[1].revenue - a[1].revenue).forEach(([code, data]) => {
-                const total = data.New + data.React;
-                html += `<tr>
-                    <td>${code}</td>
-                    <td class="value-new">${data.New}</td>
-                    <td class="value-react">${data.React}</td>
-                    <td>${total}</td>
-                    <td class="value-revenue">R${data.revenue.toFixed(2)}</td>
-                </tr>`;
-            });
-
-            document.getElementById('codeTable').innerHTML = html;
-        }
-
-        function exportToExcel() {
-            try {
-                const filtered = filterData(1);
-                
-                const newTotal = filtered.filter(r => r.Status === 'New').length;
-                const reactTotal = filtered.filter(r => r.Status === 'React').length;
-                const totalRev = filtered.reduce((sum, r) => sum + r['Turnover in ZAR'], 0);
-                const reactRate = totalRev === 0 ? 0 : ((reactTotal / (newTotal + reactTotal)) * 100).toFixed(1);
-
-                const shops = {};
-                const reps = {};
-                const codes = {};
-                
-                filtered.forEach(row => {
-                    if (!shops[row['Sales Group']]) shops[row['Sales Group']] = { New: 0, React: 0, revenue: 0 };
-                    shops[row['Sales Group']][row.Status === 'New' ? 'New' : 'React']++;
-                    shops[row['Sales Group']].revenue += row['Turnover in ZAR'];
-
-                    if (!reps[row['Sales Rep']]) reps[row['Sales Rep']] = { New: 0, React: 0, revenue: 0 };
-                    reps[row['Sales Rep']][row.Status === 'New' ? 'New' : 'React']++;
-                    reps[row['Sales Rep']].revenue += row['Turnover in ZAR'];
-
-                    if (!codes[row['Business Code']]) codes[row['Business Code']] = { New: 0, React: 0, revenue: 0 };
-                    codes[row['Business Code']][row.Status === 'New' ? 'New' : 'React']++;
-                    codes[row['Business Code']].revenue += row['Turnover in ZAR'];
-                });
-
-                let excelContent = `<html xmlns:x="urn:schemas-microsoft-com:office:excel">
-                <head>
-                    <meta charset="UTF-8">
-                    <style>
-                        table { border-collapse: collapse; width: 100%; }
-                        th, td { border: 1px solid #999; padding: 8px; text-align: left; }
-                        th { background-color: #4472C4; color: white; font-weight: bold; }
-                        .header { font-size: 16px; font-weight: bold; background-color: #D9E1F2; }
-                        .subheader { font-size: 12px; background-color: #E7E6E6; font-weight: bold; }
-                    </style>
-                </head>
-                <body>`;
-
-                excelContent += `<table>
-                    <tr><td colspan="2" class="header">SHOPS ANALYTICS - EXECUTIVE SUMMARY</td></tr>
-                    <tr><td colspan="2">Generated: ${new Date().toLocaleDateString()}</td></tr>
-                    <tr><td colspan="2"></td></tr>
-                    <tr><td class="subheader">KEY METRICS</td><td></td></tr>
-                    <tr><td>New Clients</td><td>${newTotal}</td></tr>
-                    <tr><td>Reactivated Clients</td><td>${reactTotal}</td></tr>
-                    <tr><td>Total Revenue (ZAR)</td><td>R${totalRev.toFixed(2)}</td></tr>
-                    <tr><td>Reactivation Rate (%)</td><td>${reactRate}%</td></tr>
-                    <tr><td colspan="2"></td></tr>
-                    <tr><td class="subheader">TOP SHOPS</td><td></td></tr>
-                    <tr><th>Shop Location</th><th>New | Reactivated | Total | Revenue</th></tr>`;
-
-                Object.entries(shops)
-                    .sort((a, b) => b[1].revenue - a[1].revenue)
-                    .slice(0, 5)
-                    .forEach(([shop, data]) => {
-                        excelContent += `<tr><td>${shop}</td><td>${data.New} | ${data.React} | ${data.New + data.React} | R${data.revenue.toFixed(2)}</td></tr>`;
-                    });
-
-                excelContent += `<tr><td colspan="2"></td></tr>
-                    <tr><td class="subheader">TOP REPS</td><td></td></tr>
-                    <tr><th>Sales Rep</th><th>New | Reactivated | Total | Revenue</th></tr>`;
-
-                Object.entries(reps)
-                    .sort((a, b) => b[1].revenue - a[1].revenue)
-                    .slice(0, 5)
-                    .forEach(([rep, data]) => {
-                        excelContent += `<tr><td>Rep ${rep}</td><td>${data.New} | ${data.React} | ${data.New + data.React} | R${data.revenue.toFixed(2)}</td></tr>`;
-                    });
-
-                excelContent += `</table>`;
-
-                excelContent += `<br><br><br><table>
-                    <tr><td colspan="7" class="header">ALL TRANSACTIONS</td></tr>
-                    <tr>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th>Shop Location</th>
-                        <th>Rep ID</th>
-                        <th>Business Code</th>
-                        <th>Customer Name</th>
-                        <th>Revenue (ZAR)</th>
-                    </tr>`;
-
-                filtered.forEach(row => {
-                    excelContent += `<tr>
-                        <td>${row.Status}</td>
-                        <td>${row['Sales Day']}</td>
-                        <td>${row['Sales Group']}</td>
-                        <td>${row['Sales Rep']}</td>
-                        <td>${row['Business Code']}</td>
-                        <td>${row['Cust Name']}</td>
-                        <td>R${row['Turnover in ZAR'].toFixed(2)}</td>
-                    </tr>`;
-                });
-
-                excelContent += `</table>`;
-
-                excelContent += `<br><br><br><table>
-                    <tr><td colspan="6" class="header">SHOP ANALYSIS</td></tr>
-                    <tr>
-                        <th>Shop Location</th>
-                        <th>New</th>
-                        <th>Reactivated</th>
-                        <th>Total</th>
-                        <th>Revenue (ZAR)</th>
-                        <th>Avg per Client</th>
-                    </tr>`;
-
-                Object.entries(shops)
-                    .sort((a, b) => b[1].revenue - a[1].revenue)
-                    .forEach(([shop, data]) => {
-                        const avg = (data.revenue / (data.New + data.React)).toFixed(2);
-                        excelContent += `<tr>
-                            <td>${shop}</td>
-                            <td>${data.New}</td>
-                            <td>${data.React}</td>
-                            <td>${data.New + data.React}</td>
-                            <td>R${data.revenue.toFixed(2)}</td>
-                            <td>R${avg}</td>
-                        </tr>`;
-                    });
-
-                excelContent += `</table></body></html>`;
-
-                const blob = new Blob([excelContent], { type: 'application/vnd.ms-excel;charset=utf-8' });
-                const link = document.createElement('a');
-                const url = URL.createObjectURL(blob);
-                const fileName = `Shops-Analytics-${new Date().toISOString().split('T')[0]}.xls`;
-                
-                link.href = url;
-                link.download = fileName;
-                
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                setTimeout(() => URL.revokeObjectURL(url), 100);
-                
-                alert('✅ EXPORT SUCCESSFUL!\n\nFile: ' + fileName);
-
-            } catch (error) {
-                console.error('Export error:', error);
-                alert('❌ EXPORT FAILED\n\nError: ' + error.message);
+        function updateEBusinessDashboard() {
+            if (ebCustomerData.length === 0) {
+                document.getElementById('ebNewCount').textContent = '-';
+                document.getElementById('ebReactCount').textContent = '-';
+                document.getElementById('ebGrossProfit').textContent = 'R0';
+                return;
             }
+
+            const startDate = document.getElementById('ebStartDate').value;
+            const endDate = document.getElementById('ebEndDate').value;
+            const csc = document.getElementById('ebCSC').value;
+            const ccp = document.getElementById('ebCCP').value;
+
+            let filtered = ebRawTransactions;
+
+            if (startDate) {
+                filtered = filtered.filter(r => r['Calendar day'] >= startDate.replace(/-/g, '/'));
+            }
+            if (endDate) {
+                filtered = filtered.filter(r => r['Calendar day'] <= endDate.replace(/-/g, '/'));
+            }
+            if (csc) {
+                filtered = filtered.filter(r => r.CSC === csc);
+            }
+            if (ccp) {
+                filtered = filtered.filter(r => r.CCP === ccp);
+            }
+
+            const newCount = filtered.filter(r => r['New / React'] === 'New').length;
+            const reactCount = filtered.filter(r => r['New / React'] === 'React').length;
+            const grossProfit = filtered.reduce((sum, r) => sum + (parseFloat(r.GrossProfitPFEP) || 0), 0);
+
+            document.getElementById('ebNewCount').textContent = newCount;
+            document.getElementById('ebReactCount').textContent = reactCount;
+            document.getElementById('ebGrossProfit').textContent = 'R' + grossProfit.toFixed(2);
+
+            updateEBCustomerTable();
+            updateEBTrendChart();
+            updateEBTopCustomersChart();
         }
+
+        function updateEBCustomerTable() {
+            let html = '';
+            ebCustomerData.slice(0, 100).forEach(customer => {
+                html += `<tr>
+                    <td>${customer.CustomerNumber}</td>
+                    <td>${customer.CustomerName}</td>
+                    <td>${customer.FirstPurchaseDate}</td>
+                    <td>${customer.LastPurchaseDate}</td>
+                    <td>R${customer.TotalRevenue.toFixed(2)}</td>
+                    <td>${customer.OrderCount}</td>
+                    <td class="${customer.IsNew === 'Yes' ? 'value-yes' : 'value-no'}">${customer.IsNew}</td>
+                    <td class="${customer.IsReactivated === 'Yes' ? 'value-yes' : 'value-no'}">${customer.IsReactivated}</td>
+                </tr>`;
+            });
+            document.getElementById('ebCustomerTable').innerHTML = html || '<tr><td colspan="8" style="text-align: center; padding: 20px;">No customer data available</td></tr>';
+        }
+
+        function updateEBTrendChart() {
+            const monthlyData = {};
+            ebRawTransactions.forEach(row => {
+                const month = row.Month;
+                if (!monthlyData[month]) {
+                    monthlyData[month] = 0;
+                }
+                monthlyData[month] += parseFloat(row.Turnover) || 0;
+            });
+
+            const months = ['January-26', 'February-26', 'March-26', 'April-26', 'May-26', 'June-26'].filter(m => monthlyData[m]);
+            const revenues = months.map(m => monthlyData[m] / 1000000); // Convert to millions
+
+            const ctx = document.getElementById('ebTrendChart').getContext('2d');
+            if (ebTrendChartInstance) ebTrendChartInstance.destroy();
+
+            ebTrendChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months.map(m => m.split('-')[0]),
+                    datasets: [{
+                        label: 'Monthly Revenue (Millions ZAR)',
+                        data: revenues,
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } },
+                    scales: { y: { beginAtZero: true, ticks: { callback: v => 'R' + v + 'M' } } }
+                }
+            });
+        }
+
+        function updateEBTopCustomersChart() {
+            const topCustomers = ebCustomerData.sort((a, b) => b.TotalRevenue - a.TotalRevenue).slice(0, 10);
+            const names = topCustomers.map(c => c.CustomerName.substring(0, 20));
+            const revenues = topCustomers.map(c => c.TotalRevenue);
+
+            const ctx = document.getElementById('ebTopCustomersChart').getContext('2d');
+            if (ebTopCustomersChartInstance) ebTopCustomersChartInstance.destroy();
+
+            ebTopCustomersChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: names,
+                    datasets: [{
+                        label: 'Revenue (ZAR)',
+                        data: revenues,
+                        backgroundColor: '#3498db'
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } },
+                    scales: { x: { beginAtZero: true } }
+                }
+            });
+        }
+
+        function destroyAllCharts() {
+            if (timeSeriesChartInstance) timeSeriesChartInstance.destroy();
+            if (shopChartInstance) shopChartInstance.destroy();
+            if (ebTrendChartInstance) ebTrendChartInstance.destroy();
+            if (ebTopCustomersChartInstance) ebTopCustomersChartInstance.destroy();
+        }
+
+        // EXPORTS
+        function exportShopsData() {
+            const ws = XLSX.utils.json_to_sheet(rawData.map(r => ({
+                'Date': r['Sales Day'],
+                'Shop': r['Sales Group'],
+                'Rep ID': r['Sales Rep'],
+                'Business Code': r['Business Code'],
+                'Customer': r['Cust Name'],
+                'Type': r.Status,
+                'Revenue (ZAR)': r['Turnover in ZAR']
+            })));
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Shops');
+            XLSX.writeFile(wb, 'shops_data_' + new Date().toISOString().split('T')[0] + '.xlsx');
+        }
+
+        function exportEBusinessData() {
+            const ws = XLSX.utils.json_to_sheet(ebCustomerData.map(c => ({
+                'Customer Number': c.CustomerNumber,
+                'Customer Name': c.CustomerName,
+                'CSC': c.CSC,
+                'First Purchase': c.FirstPurchaseDate,
+                'Last Purchase': c.LastPurchaseDate,
+                'Total Revenue': c.TotalRevenue,
+                'Orders': c.OrderCount,
+                'Is New': c.IsNew,
+                'Is Reactivated': c.IsReactivated
+            })));
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'E-Business');
+            XLSX.writeFile(wb, 'ebusiness_customers_' + new Date().toISOString().split('T')[0] + '.xlsx');
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const rememberedEmail = localStorage.getItem('rememberedEmail');
+            if (rememberedEmail) {
+                document.getElementById('email').value = rememberedEmail;
+            }
+            
+            // Load E-Business data from JSON file
+            loadEBusinessData();
+        });
+
+        // Load E-Business data
+        function loadEBusinessData() {
+            fetch('ebusiness_data.json')
+                .then(response => response.json())
+                .then(data => {
+                    ebCustomerData = data.customers;
+                    ebRawTransactions = data.transactions;
+                    if (document.getElementById('ebusinessPage').classList.contains('active')) {
+                        initEBusinessFilters();
+                        updateEBusinessDashboard();
+                    }
+                })
+                .catch(error => console.warn('E-Business data file not loaded yet. Will be available after import.'));
+        }
+
+        // DATA IMPORT HANDLER (for file uploads)
+        window.importEBusinessData = function(customerData, transactionData) {
+            ebCustomerData = customerData;
+            ebRawTransactions = transactionData;
+            initEBusinessFilters();
+            updateEBusinessDashboard();
+        };
     </script>
 </body>
 </html>
