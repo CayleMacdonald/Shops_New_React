@@ -1,0 +1,45 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "replace-mojibake-labels",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$p='c:\\Users\\SinayoD\\OneDrive - WGS 365\\Desktop\\Shops-New-React-Dashboard\\index.html';$c=[System.IO.File]::ReadAllText($p);$c=[regex]::Replace($c,'(?<=<button class=\"home-btn\" onclick=\"goHome\\(\\)\">)[^<]+(?=</button>)','Home');$c=[regex]::Replace($c,'(?<=<h2 class=\"home-title\">)[^<]+(?=</h2>)','Analytics Dashboard');$c=[regex]::Replace($c,'(<div class=\"nav-card\" onclick=\"showPage\\(''shops''\\)\">[\\s\\S]*?<span class=\"nav-card-icon\">)[^<]*(</span>)','$1Shops$2');$c=[regex]::Replace($c,'(<div class=\"nav-card\" onclick=\"showPage\\(''ebusiness''\\)\">[\\s\\S]*?<span class=\"nav-card-icon\">)[^<]*(</span>)','$1E-Biz$2');$c=[regex]::Replace($c,'<label>[^<]* Start Date</label>','<label>Start Date</label>');$c=[regex]::Replace($c,'<label>[^<]* End Date</label>','<label>End Date</label>');$c=[regex]::Replace($c,'<label>[^<]* Client Type</label>','<label>Client Type</label>');$c=[regex]::Replace($c,'<label>[^<]* Shop Location</label>','<label>Shop Location</label>');$c=[regex]::Replace($c,'<h3>[^<]* Trend Over Time</h3>','<h3>Trend Over Time</h3>');$c=[regex]::Replace($c,'<h3>[^<]* Performance by Shop</h3>','<h3>Performance by Shop</h3>');$c=[regex]::Replace($c,'<h3>[^<]* Shop Transaction Details</h3>','<h3>Shop Transaction Details</h3>');$c=[regex]::Replace($c,'(?<=<button class=\"export-btn\" onclick=\"exportShopsData\\(\\)\">)[^<]+(?=</button>)','Export Shops Data');$c=[regex]::Replace($c,'<span>[^<]* Filters</span>','<span>Filters</span>');$c=[regex]::Replace($c,'<label>[^<]* CSC \\(Sales Rep\\)</label>','<label>CSC (Sales Rep)</label>');$c=[regex]::Replace($c,'<label>[^<]* CCP \\(Contact Point\\)</label>','<label>CCP (Contact Point)</label>');$c=[regex]::Replace($c,'<span>[^<]* KPI Summary</span>','<span>KPI Summary</span>');$c=[regex]::Replace($c,'<span>[^<]* Charts</span>','<span>Charts</span>');$c=[regex]::Replace($c,'<h3>[^<]* New vs Reactivated per Month</h3>','<h3>New vs Reactivated per Month</h3>');$c=[regex]::Replace($c,'<h3>[^<]* Performance by Contact Point \\(CCP\\)</h3>','<h3>Performance by Contact Point (CCP)</h3>');$c=[regex]::Replace($c,'<span>[^<]* All E-Business Customers</span>','<span>All E-Business Customers</span>');$c=[regex]::Replace($c,'<span>[^<]* Import / Export</span>','<span>Import / Export</span>');[System.IO.File]::WriteAllText($p,$c,[System.Text.Encoding]::UTF8);"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "replace-mojibake-labels-escaped",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$$p='c:\\Users\\SinayoD\\OneDrive - WGS 365\\Desktop\\Shops-New-React-Dashboard\\index.html';$$c=[System.IO.File]::ReadAllText($$p);$$c=[regex]::Replace($$c,'(?<=<button class=\"home-btn\" onclick=\"goHome\\(\\)\">)[^<]+(?=</button>)','Home');$$c=[regex]::Replace($$c,'(?<=<h2 class=\"home-title\">)[^<]+(?=</h2>)','Analytics Dashboard');$$c=[regex]::Replace($$c,'(<div class=\"nav-card\" onclick=\"showPage\\(''shops''\\)\">[\\s\\S]*?<span class=\"nav-card-icon\">)[^<]*(</span>)','$$1Shops$$2');$$c=[regex]::Replace($$c,'(<div class=\"nav-card\" onclick=\"showPage\\(''ebusiness''\\)\">[\\s\\S]*?<span class=\"nav-card-icon\">)[^<]*(</span>)','$$1E-Biz$$2');$$c=[regex]::Replace($$c,'<label>[^<]* Start Date</label>','<label>Start Date</label>');$$c=[regex]::Replace($$c,'<label>[^<]* End Date</label>','<label>End Date</label>');$$c=[regex]::Replace($$c,'<label>[^<]* Client Type</label>','<label>Client Type</label>');$$c=[regex]::Replace($$c,'<label>[^<]* Shop Location</label>','<label>Shop Location</label>');$$c=[regex]::Replace($$c,'<h3>[^<]* Trend Over Time</h3>','<h3>Trend Over Time</h3>');$$c=[regex]::Replace($$c,'<h3>[^<]* Performance by Shop</h3>','<h3>Performance by Shop</h3>');$$c=[regex]::Replace($$c,'<h3>[^<]* Shop Transaction Details</h3>','<h3>Shop Transaction Details</h3>');$$c=[regex]::Replace($$c,'(?<=<button class=\"export-btn\" onclick=\"exportShopsData\\(\\)\">)[^<]+(?=</button>)','Export Shops Data');$$c=[regex]::Replace($$c,'<span>[^<]* Filters</span>','<span>Filters</span>');$$c=[regex]::Replace($$c,'<label>[^<]* CSC \\(Sales Rep\\)</label>','<label>CSC (Sales Rep)</label>');$$c=[regex]::Replace($$c,'<label>[^<]* CCP \\(Contact Point\\)</label>','<label>CCP (Contact Point)</label>');$$c=[regex]::Replace($$c,'<span>[^<]* KPI Summary</span>','<span>KPI Summary</span>');$$c=[regex]::Replace($$c,'<span>[^<]* Charts</span>','<span>Charts</span>');$$c=[regex]::Replace($$c,'<h3>[^<]* New vs Reactivated per Month</h3>','<h3>New vs Reactivated per Month</h3>');$$c=[regex]::Replace($$c,'<h3>[^<]* Performance by Contact Point \\(CCP\\)</h3>','<h3>Performance by Contact Point (CCP)</h3>');$$c=[regex]::Replace($$c,'<span>[^<]* All E-Business Customers</span>','<span>All E-Business Customers</span>');$$c=[regex]::Replace($$c,'<span>[^<]* Import / Export</span>','<span>Import / Export</span>');[System.IO.File]::WriteAllText($$p,$$c,[System.Text.Encoding]::UTF8);"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "run-fix-mojibake-script",
+			"type": "shell",
+			"command": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\fix_mojibake_labels.ps1",
+			"problemMatcher": []
+		},
+		{
+			"label": "cleanup-fix-script",
+			"type": "shell",
+			"command": "powershell -NoProfile -Command \"if (Test-Path '.\\\\fix_mojibake_labels.ps1') { Remove-Item '.\\\\fix_mojibake_labels.ps1' -Force }\"",
+			"problemMatcher": []
+		},
+		{
+			"label": "cleanup-fix-script-2",
+			"type": "shell",
+			"command": "if (Test-Path '.\\fix_mojibake_labels.ps1') { Remove-Item '.\\fix_mojibake_labels.ps1' -Force }",
+			"problemMatcher": []
+		}
+	]
+}
