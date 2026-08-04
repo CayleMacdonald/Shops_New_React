@@ -40,6 +40,97 @@
 			"type": "shell",
 			"command": "if (Test-Path '.\\fix_mojibake_labels.ps1') { Remove-Item '.\\fix_mojibake_labels.ps1' -Force }",
 			"problemMatcher": []
+		},
+		{
+			"label": "apply-eb-import-fix",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				".\\_apply_eb_import_fix.ps1"
+			]
+		},
+		{
+			"label": "remove-extra-eb-showpage",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$p='.\\index.html';$c=[IO.File]::ReadAllText($p);$old=\"            ebVisibleCustomerCount = 50;`r`n                showPage('ebusiness');`r`n                initEBusinessFilters();\";$new=\"            ebVisibleCustomerCount = 50;`r`n            initEBusinessFilters();\";$c=$c.Replace($old,$new);[IO.File]::WriteAllText($p,$c,[Text.UTF8Encoding]::new($false));Write-Output 'Removed extra showPage in importEBusinessData';"
+			]
+		},
+		{
+			"label": "remove-extra-eb-showpage-script",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				".\\_remove_extra_showpage.ps1"
+			]
+		},
+		{
+			"label": "fix-window-import-block",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				".\\_fix_window_import_block.ps1"
+			]
+		},
+		{
+			"label": "normalize-eb-helper-block",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				".\\_normalize_eb_helper_block.ps1"
+			]
+		},
+		{
+			"label": "repair-eb-functions",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				".\\_repair_eb_functions.ps1"
+			]
+		},
+		{
+			"label": "cleanup-temp-ps1",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"if (Test-Path '.\\_*.ps1') { Remove-Item .\\_*.ps1 -Force }"
+			]
+		},
+		{
+			"label": "cleanup-temp-ps1-cmd",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"del",
+				"/q",
+				"_*.ps1"
+			]
 		}
 	]
 }
